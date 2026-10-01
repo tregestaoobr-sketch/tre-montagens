@@ -1,0 +1,9 @@
+{
+  "name": "T.R.E. Montagens",
+  "short_name": "T.R.E. Obras",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [{"src":"./logo-tre.jpg","sizes":"192x192","type":"image/jpeg"}]
+}

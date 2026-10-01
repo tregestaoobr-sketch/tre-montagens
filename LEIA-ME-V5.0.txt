@@ -1,0 +1,50 @@
+T.R.E. MONTAGENS — V5.0 ESTÁVEL
+
+OBJETIVO
+Esta versão consolida os principais problemas encontrados durante os testes:
+- BATER PONTO: corrigido o conflito de variável JavaScript que causava
+  "Cannot access 'data' before initialization".
+- FUNCIONÁRIOS: o cadastro só é considerado concluído depois de uma nova
+  leitura do Supabase confirmar que o registro existe.
+- SINCRONIZAÇÃO: uma falha em uma tabela não apaga da tela os dados das outras.
+- REALTIME: há apenas um canal, com recarga agrupada/debounce, sem polling de
+  5 segundos e sem redesenho contínuo durante o preenchimento.
+- DESIGNAÇÕES: o aplicativo passa a usar as colunas reais da tabela:
+  data e observacao. Não envia data_registro, data_inicio ou instrucao.
+- CACHE: esta entrega usa versão V5.0 para impedir que o navegador reutilize
+  o shell antigo quando o pacote for publicado como PWA.
+
+SUPABASE
+1. Abra Supabase > SQL Editor > New Query.
+2. Cole o arquivo SUPABASE_TRE_V5_INSTALACAO.sql inteiro.
+3. Execute uma única vez.
+4. NÃO apague o banco e NÃO execute o SQL antigo destrutivo
+   supabase_tre_auth_rls.sql.
+5. Se precisar deixar a base operacional zerada, o arquivo separado
+   SUPABASE_TRE_LIMPAR_DADOS_TESTE.sql é opcional e destrutivo somente para
+   os registros de negócio. Não execute sem querer.
+
+ADMINISTRADOR
+Depois da instalação, confirme que o usuário administrador existe em
+Authentication > Users. Se necessário, execute somente:
+
+update public.profiles
+set role='admin'
+where email='SEU_EMAIL';
+
+Não coloque senha nem service_role no HTML.
+
+TESTE FINAL RECOMENDADO
+1. Entrar como administrador.
+2. Cadastrar um funcionário com PIN de 4 dígitos.
+3. Sair do painel.
+4. Entrar novamente como funcionário.
+5. Confirmar que o funcionário continua na lista.
+6. Selecionar funcionário + obra + data + PIN e BATER PONTO.
+7. Voltar ao painel e conferir o ponto.
+8. Testar Designar Obra.
+9. Fechar e abrir novamente o aplicativo.
+
+FONTE OFICIAL DOS DADOS
+Os registros oficiais ficam no Supabase. O navegador não usa localStorage
+para guardar funcionários, obras, pontos ou designações.
