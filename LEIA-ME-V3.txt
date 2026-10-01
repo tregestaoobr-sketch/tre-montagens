@@ -1,0 +1,14 @@
+T.R.E. MONTAGENS — V3 MODERNA
+
+Esta versão mantém as funções e a segurança da V2 e reformula a interface para um visual institucional moderno, leve e responsivo.
+
+ARQUIVOS
+- index.html: aplicação V3
+- logo-tre.jpg: identidade visual
+- manifest.json e sw.js: PWA
+
+CONFIGURAÇÃO
+No index.html, configure SUPABASE_URL e SUPABASE_ANON_KEY (anon/public). Nunca use service_role no navegador.
+
+BANCO
+Use o mesmo SQL de Auth + RLS da V2. A V3 não exige migração de banco por causa do redesign.
