@@ -3222,5 +3222,14 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     });
 
   </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=5.1', { updateViaCache: 'none' })
+          .then(reg => reg.update())
+          .catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
