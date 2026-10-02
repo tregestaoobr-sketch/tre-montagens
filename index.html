@@ -1999,6 +1999,38 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         return;
       }
 
+      // Regra: no máximo 1 ponto por funcionário/obra na mesma hora e data.
+      // Permite novos pontos em outra hora ou em outra obra.
+      try {
+        const sessaoVerificacao = obterSessaoFuncionario();
+        if (!sessaoVerificacao?.token) throw new Error('Sessão do funcionário expirada. Informe o PIN novamente.');
+
+        const { data: historicoPontos, error: erroHistorico } = await supabaseClient.rpc('employee_get_history', {
+          p_session_token: sessaoVerificacao.token
+        });
+        if (erroHistorico) throw erroHistorico;
+
+        const horaAtual = new Date().getHours();
+        const pontoNaMesmaHora = (historicoPontos || []).some(p => {
+          if (String(p.funcionario_id) !== String(funcId)) return false;
+          if (String(p.obra_id) !== String(obraId)) return false;
+          if (String(p.data) !== String(dataPonto)) return false;
+          if (!p.hora) return false;
+
+          const horaRegistrada = String(p.hora).match(/\\d{1,2}/);
+          return horaRegistrada && Number(horaRegistrada[0]) === horaAtual;
+        });
+
+        if (pontoNaMesmaHora) {
+          alert("⏰ Este funcionário já bateu o ponto nesta obra nesta hora. Tente novamente na próxima hora ou selecione outra obra.");
+          return;
+        }
+      } catch (erroHistorico) {
+        console.error('Não foi possível verificar o histórico do ponto:', erroHistorico);
+        alert("Não foi possível verificar se já existe um ponto nesta hora. Tente novamente.");
+        return;
+      }
+
       btn.disabled = true;
       btn.innerText = "🌐 OBTENDO GPS E REGISTRANDO...";
 
