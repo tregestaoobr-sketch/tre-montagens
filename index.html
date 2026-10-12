@@ -118,18 +118,9 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 
-
-<style id="tre-notificacoes-v51">
-#tre-notif-bell{position:fixed;right:16px;bottom:18px;z-index:9990;border:0;border-radius:999px;width:56px;height:56px;background:#172554;color:#fff;box-shadow:0 8px 28px #0f172a40;font-size:22px;display:none;align-items:center;justify-content:center}
-#tre-notif-count{position:absolute;right:-2px;top:-3px;background:#f97316;color:white;border-radius:99px;min-width:21px;height:21px;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 5px;border:2px solid white}
-#tre-notif-panel{position:fixed;right:14px;bottom:84px;width:min(370px,calc(100vw - 28px));max-height:min(65dvh,480px);overflow:auto;z-index:9991;background:white;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 18px 55px #02081738;display:none;color:#172033}
-#tre-notif-panel.open{display:block}.tre-notif-item{padding:12px 14px;border-bottom:1px solid #eef2f7;font-size:13px;line-height:1.4}.tre-notif-item:last-child{border-bottom:0}.tre-notif-time{display:block;color:#94a3b8;font-size:10px;margin-top:4px}.tre-notif-toast{position:fixed;z-index:9992;top:14px;left:50%;transform:translateX(-50%);width:min(430px,calc(100vw - 28px));background:#0f172a;color:white;padding:14px 16px;border-left:4px solid #f97316;border-radius:14px;box-shadow:0 12px 36px #02081755;font-size:13px;animation:treNotifIn .2s ease both}.tre-notif-toast strong{display:block;margin-bottom:3px}.tre-notif-empty{padding:20px;text-align:center;color:#64748b;font-size:12px}
-@keyframes treNotifIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
-</style>
-
 </head>
 
-<body data-tre-version="5.1-notificacoes" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+<body data-tre-version="5.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -3231,35 +3222,95 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (event.key === 'Escape') fecharComprovanteVale();
     });
 
-  
+  </script>
+
+<script id="tre-notificacoes-bridge">window.__treGetSupabase=function(){try{return typeof supabaseClient!=="undefined"?supabaseClient:null;}catch(e){return null;}};</script>
+
+<style id="tre-notificacoes-fix">
+#tre-notif-bell{position:fixed;right:16px;bottom:18px;z-index:9998;border:0;border-radius:999px;width:54px;height:54px;background:#f97316;color:white;box-shadow:0 8px 24px #0f172a44;font-size:22px;display:none}
+#tre-notif-count{position:absolute;right:-2px;top:-3px;background:#dc2626;color:#fff;border-radius:999px;min-width:20px;height:20px;padding:0 5px;font:700 11px/20px system-ui;display:none}
+#tre-notif-panel{position:fixed;right:12px;bottom:82px;z-index:9999;width:min(360px,calc(100vw - 24px));max-height:55vh;overflow:auto;background:#fff;color:#172033;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 18px 55px #0f172a33;padding:14px;display:none}
+#tre-notif-panel h3{margin:0 0 8px;font-size:15px;font-weight:800}
+.tre-notif-item{padding:10px 0;border-top:1px solid #edf0f4;font-size:13px}
+#tre-notif-status{font-size:11px;color:#64748b;margin-top:8px}
+</style>
+<button id="tre-notif-bell" type="button" aria-label="Abrir notificações">🔔<span id="tre-notif-count">0</span></button>
+<section id="tre-notif-panel" aria-live="polite">
+  <h3>Notificações T.R.E.</h3>
+  <div id="tre-notif-list"><div class="tre-notif-item">Conectando aos avisos...</div></div>
+  <div id="tre-notif-status">Os avisos em tempo real exigem conexão e permissões no Supabase.</div>
+  <button type="button" id="tre-notif-clear" style="margin-top:8px;padding:8px 10px;border-radius:9px;background:#f1f5f9;font-weight:700">Limpar avisos da tela</button>
+</section>
+<script id="tre-notificacoes-fix-js">
 (function(){
-  const items=[]; let unread=0; let channel=null; const seen=new Set();
-  const $=id=>document.getElementById(id);
-  function role(){if(!$('visao-admin')||!$('visao-funcionario'))return '';if(!$('visao-admin').classList.contains('hidden')&&window.adminAuthenticated)return 'admin';if(!$('visao-funcionario').classList.contains('hidden'))return 'funcionario';return '';}
-  function update(){const b=$('tre-notif-bell'),c=$('tre-notif-count'),list=$('tre-notif-list');if(!b)return;b.style.display=role()?'flex':'none';c.textContent=String(unread);c.style.display=unread?'flex':'none';if(items.length){list.innerHTML=items.map(n=>`<div class="tre-notif-item"><strong>${esc(n.title)}</strong><div>${esc(n.text)}</div><span class="tre-notif-time">${esc(n.time)}</span></div>`).join('')}else list.innerHTML='<div class="tre-notif-empty">Nenhuma notificação ainda.</div>';}
-  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  window.treAlternarNotificacoes=function(){const p=$('tre-notif-panel');p.classList.toggle('open');if(p.classList.contains('open')){unread=0;update();}};
-  window.treLimparNotificacoes=function(){items.length=0;unread=0;update();};
-  function notify(title,text){const r=role();if(!r)return;items.unshift({title,text,time:new Date().toLocaleString('pt-BR')});if(items.length>30)items.pop();unread++;update();const toast=document.createElement('div');toast.className='tre-notif-toast';toast.innerHTML=`<strong>${esc(title)}</strong>${esc(text)}`;document.body.appendChild(toast);setTimeout(()=>toast.remove(),5500);try{if('vibrate'in navigator)navigator.vibrate([80,40,80]);}catch(_){} }
-  function nomeFuncionario(row){return row?.funcionario_nome||row?.nome_funcionario||row?.funcionario||('Funcionário '+String(row?.funcionario_id||'').slice(0,8));}
-  function nomeObra(row){return row?.obra_nome||row?.nome_obra||row?.obra||('obra '+String(row?.obra_id||'').slice(0,8));}
-  function onChange(payload){const table=payload?.table,event=payload?.eventType||payload?.event;const row=payload?.new||payload?.record||{};const old=payload?.old||{};const id=String(row.id||old.id||JSON.stringify(row));const key=[table,event,id].join(':');if(seen.has(key))return;seen.add(key);if(seen.size>400)seen.clear();const r=role();if(!r)return;
-    if(r==='admin'&&table==='pontos'&&event==='INSERT')notify('📍 Novo ponto registrado',`${nomeFuncionario(row)} registrou ponto na ${nomeObra(row)}.`);
-    else if(r==='funcionario'&&table==='obras'&&event==='INSERT')notify('🏗️ Nova obra cadastrada',`${row.nome||'Uma nova obra'}${row.local?' — '+row.local:''} foi adicionada.`);
-    else if(r==='admin'&&table!=='pontos'&&table!=='obras'&&['INSERT','UPDATE','DELETE'].includes(event)){const label=({equipe:'equipe/funcionário',vales:'vale',fotos_obra:'foto da obra',pdfs_obra:'PDF da obra',designacoes:'designação'})[table]||table;notify('🔄 Sistema atualizado',`Houve uma alteração em ${label}.`);}
-    if(r==='admin'&&typeof window.agendarSincronizacaoRealtime==='function')window.agendarSincronizacaoRealtime();
-    if(r==='funcionario'&&table==='obras'&&event==='INSERT'&&typeof window.carregarDadosPublicosFuncionario==='function')window.carregarDadosPublicosFuncionario();
+  const bell=document.getElementById('tre-notif-bell');
+  const panel=document.getElementById('tre-notif-panel');
+  const list=document.getElementById('tre-notif-list');
+  const count=document.getElementById('tre-notif-count');
+  const status=document.getElementById('tre-notif-status');
+  if(!bell||!panel||!list)return;
+  let items=[], channel=null, client=null, role='unknown', ready=false;
+  function visible(id){const e=document.getElementById(id);return !!e&&!e.classList.contains('hidden')&&getComputedStyle(e).display!=='none';}
+  function updateRole(){
+    if(visible('visao-admin')) role='admin';
+    else if(visible('visao-funcionario')) role='funcionario';
+    else role='unknown';
+    bell.style.display='block'; // Correção: não ocultar o sino por falha na detecção da área ativa.
   }
-  function connect(){if(!window.supabaseClient||channel)return;try{channel=window.supabaseClient.channel('tre-notificacoes-v51').on('postgres_changes',{event:'*',schema:'public',table:'pontos'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'obras'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'equipe'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'vales'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'fotos_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'pdfs_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'designacoes'},onChange).subscribe(s=>console.log('[TRE notificações]',s));}catch(e){console.warn('Notificações Realtime indisponíveis:',e);}}
-  document.addEventListener('DOMContentLoaded',()=>{update();connect();setTimeout(connect,1200);});
-  // O cliente Supabase pode ser inicializado depois deste bloco em instalações personalizadas.
-  let tentativas=0;const retry=setInterval(()=>{connect();if(channel||++tentativas>20)clearInterval(retry);},1000);
+  function render(){
+    count.textContent=String(items.length);count.style.display=items.length?'block':'none';
+    list.innerHTML=items.length?items.map(x=>'<div class="tre-notif-item"><strong>'+esc(x.title)+'</strong><div>'+esc(x.body)+'</div><small>'+esc(x.time)+'</small></div>').join(''):'<div class="tre-notif-item">Nenhuma notificação recebida nesta sessão.</div>';
+  }
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function add(title,body){
+    items.unshift({title,body,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});
+    items=items.slice(0,30);render();
+    if('vibrate' in navigator) navigator.vibrate(80);
+  }
+  bell.addEventListener('click',()=>{panel.style.display=panel.style.display==='block'?'none':'block';});
+  document.getElementById('tre-notif-clear').addEventListener('click',()=>{items=[];render();});
+  function eventHandler(payload){
+    updateRole();
+    const table=payload&&payload.table||'';
+    const ev=payload&&payload.eventType||'UPDATE';
+    const row=payload&&(payload.new||payload.old)||{};
+    if(role==='admin'&&table==='pontos'&&ev==='INSERT'){
+      const who=row.funcionario_nome||row.nome_funcionario||row.nome||'Um funcionário';
+      const obra=row.obra_nome||row.nome_obra||'uma obra';
+      add('Novo ponto registrado',who+' registrou ponto em '+obra+'.');
+    } else if(role==='admin'&&['obras','equipe','vales','fotos_obra','pdfs_obra','designacoes'].includes(table)){
+      add('Atualização no sistema', 'Houve uma alteração em '+table+'.');
+    } else if(role==='funcionario'&&table==='obras'&&ev==='INSERT'){
+      add('Nova obra cadastrada', (row.nome||row.titulo||'Uma nova obra')+' foi adicionada ao sistema.');
+    }
+  }
+  function subscribe(){
+    if(!client){
+      client=window.supabaseClient||window.treSupabase||null;
+      // The app declares supabaseClient with let inside its own script, so expose it through a small bridge below.
+      if(!client&&typeof window.__treGetSupabase==='function') client=window.__treGetSupabase();
+    }
+    if(!client||!client.channel){status.textContent='Não foi possível acessar o cliente Supabase nesta página.';return;}
+    try{
+      channel=client.channel('tre-notificacoes-ui-fix-'+Math.random().toString(36).slice(2,7));
+      ['pontos','obras','equipe','vales','fotos_obra','pdfs_obra','designacoes'].forEach(table=>{
+        channel.on('postgres_changes',{event:'*',schema:'public',table},eventHandler);
+      });
+      channel.subscribe(s=>{
+        status.textContent=s==='SUBSCRIBED'?'Conectado ao Supabase Realtime.':('Estado da conexão: '+s+'. Confira a publicação Realtime e as permissões no Supabase.');
+        if(s==='CHANNEL_ERROR'||s==='TIMED_OUT') console.warn('[T.R.E.] Falha no canal de notificações:',s);
+      });
+    }catch(e){status.textContent='Falha ao iniciar notificações. Consulte o console do navegador.';console.warn(e);}
+  }
+  // Detect view switches without changing existing app functions.
+  const observer=new MutationObserver(updateRole);
+  ['visao-admin','visao-funcionario'].forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['class','style']});});
+  window.addEventListener('load',()=>{updateRole();subscribe();});
+  setTimeout(()=>{updateRole();subscribe();},1800);
+  setInterval(updateRole,2500);
+  render();
 })();
-
 </script>
-
-<div id="tre-notif-panel" aria-live="polite"><div style="position:sticky;top:0;background:#fff;padding:14px 15px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center"><strong>🔔 Notificações</strong><button type="button" onclick="treLimparNotificacoes()" style="color:#ea580c;font-size:11px;font-weight:800">Limpar</button></div><div id="tre-notif-list"><div class="tre-notif-empty">Nenhuma notificação ainda.</div></div></div>
-<button id="tre-notif-bell" type="button" aria-label="Abrir notificações" onclick="treAlternarNotificacoes()">🔔<span id="tre-notif-count">0</span></button>
 
 </body>
 </html>
