@@ -118,9 +118,18 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 
+
+<style id="tre-notificacoes-v51">
+#tre-notif-bell{position:fixed;right:16px;bottom:18px;z-index:9990;border:0;border-radius:999px;width:56px;height:56px;background:#172554;color:#fff;box-shadow:0 8px 28px #0f172a40;font-size:22px;display:none;align-items:center;justify-content:center}
+#tre-notif-count{position:absolute;right:-2px;top:-3px;background:#f97316;color:white;border-radius:99px;min-width:21px;height:21px;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 5px;border:2px solid white}
+#tre-notif-panel{position:fixed;right:14px;bottom:84px;width:min(370px,calc(100vw - 28px));max-height:min(65dvh,480px);overflow:auto;z-index:9991;background:white;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 18px 55px #02081738;display:none;color:#172033}
+#tre-notif-panel.open{display:block}.tre-notif-item{padding:12px 14px;border-bottom:1px solid #eef2f7;font-size:13px;line-height:1.4}.tre-notif-item:last-child{border-bottom:0}.tre-notif-time{display:block;color:#94a3b8;font-size:10px;margin-top:4px}.tre-notif-toast{position:fixed;z-index:9992;top:14px;left:50%;transform:translateX(-50%);width:min(430px,calc(100vw - 28px));background:#0f172a;color:white;padding:14px 16px;border-left:4px solid #f97316;border-radius:14px;box-shadow:0 12px 36px #02081755;font-size:13px;animation:treNotifIn .2s ease both}.tre-notif-toast strong{display:block;margin-bottom:3px}.tre-notif-empty{padding:20px;text-align:center;color:#64748b;font-size:12px}
+@keyframes treNotifIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+</style>
+
 </head>
 
-<body data-tre-version="5.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+<body data-tre-version="5.1-notificacoes" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -1999,38 +2008,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         return;
       }
 
-      // Regra: no máximo 1 ponto por funcionário/obra na mesma hora e data.
-      // Permite novos pontos em outra hora ou em outra obra.
-      try {
-        const sessaoVerificacao = obterSessaoFuncionario();
-        if (!sessaoVerificacao?.token) throw new Error('Sessão do funcionário expirada. Informe o PIN novamente.');
-
-        const { data: historicoPontos, error: erroHistorico } = await supabaseClient.rpc('employee_get_history', {
-          p_session_token: sessaoVerificacao.token
-        });
-        if (erroHistorico) throw erroHistorico;
-
-        const horaAtual = new Date().getHours();
-        const pontoNaMesmaHora = (historicoPontos || []).some(p => {
-          if (String(p.funcionario_id) !== String(funcId)) return false;
-          if (String(p.obra_id) !== String(obraId)) return false;
-          if (String(p.data) !== String(dataPonto)) return false;
-          if (!p.hora) return false;
-
-          const horaRegistrada = String(p.hora).match(/\\d{1,2}/);
-          return horaRegistrada && Number(horaRegistrada[0]) === horaAtual;
-        });
-
-        if (pontoNaMesmaHora) {
-          alert("⏰ Este funcionário já bateu o ponto nesta obra nesta hora. Tente novamente na próxima hora ou selecione outra obra.");
-          return;
-        }
-      } catch (erroHistorico) {
-        console.error('Não foi possível verificar o histórico do ponto:', erroHistorico);
-        alert("Não foi possível verificar se já existe um ponto nesta hora. Tente novamente.");
-        return;
-      }
-
       btn.disabled = true;
       btn.innerText = "🌐 OBTENDO GPS E REGISTRANDO...";
 
@@ -3001,6 +2978,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             <p class="text-xs">Obra: ${obra ? obra.nome : 'Geral'}</p>
             <p class="text-sm font-bold">Valor: R$ ${Number(v.valor).toFixed(2)}</p>
             <p class="text-xs italic">Obs: "${v.descricao || 'Sem descrição'}"</p>
+            ${v.comprovante ? `<button type="button" onclick="abrirComprovanteVale('${v.id}')" class="inline-block mt-1 text-xs bg-white text-gray-800 font-bold px-3 py-1 rounded border shadow-sm">📎 Ver / Baixar Comprovante</button>` : ''}
             <div class="pt-2 text-right">
               <button onclick="excluirVale('${v.id}')" class="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded hover:bg-red-700">Excluir Lançamento</button>
             </div>
@@ -3253,15 +3231,35 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (event.key === 'Escape') fecharComprovanteVale();
     });
 
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=5.1', { updateViaCache: 'none' })
-          .then(reg => reg.update())
-          .catch(() => {});
-      });
-    }
-  </script>
+  
+(function(){
+  const items=[]; let unread=0; let channel=null; const seen=new Set();
+  const $=id=>document.getElementById(id);
+  function role(){if(!$('visao-admin')||!$('visao-funcionario'))return '';if(!$('visao-admin').classList.contains('hidden')&&window.adminAuthenticated)return 'admin';if(!$('visao-funcionario').classList.contains('hidden'))return 'funcionario';return '';}
+  function update(){const b=$('tre-notif-bell'),c=$('tre-notif-count'),list=$('tre-notif-list');if(!b)return;b.style.display=role()?'flex':'none';c.textContent=String(unread);c.style.display=unread?'flex':'none';if(items.length){list.innerHTML=items.map(n=>`<div class="tre-notif-item"><strong>${esc(n.title)}</strong><div>${esc(n.text)}</div><span class="tre-notif-time">${esc(n.time)}</span></div>`).join('')}else list.innerHTML='<div class="tre-notif-empty">Nenhuma notificação ainda.</div>';}
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  window.treAlternarNotificacoes=function(){const p=$('tre-notif-panel');p.classList.toggle('open');if(p.classList.contains('open')){unread=0;update();}};
+  window.treLimparNotificacoes=function(){items.length=0;unread=0;update();};
+  function notify(title,text){const r=role();if(!r)return;items.unshift({title,text,time:new Date().toLocaleString('pt-BR')});if(items.length>30)items.pop();unread++;update();const toast=document.createElement('div');toast.className='tre-notif-toast';toast.innerHTML=`<strong>${esc(title)}</strong>${esc(text)}`;document.body.appendChild(toast);setTimeout(()=>toast.remove(),5500);try{if('vibrate'in navigator)navigator.vibrate([80,40,80]);}catch(_){} }
+  function nomeFuncionario(row){return row?.funcionario_nome||row?.nome_funcionario||row?.funcionario||('Funcionário '+String(row?.funcionario_id||'').slice(0,8));}
+  function nomeObra(row){return row?.obra_nome||row?.nome_obra||row?.obra||('obra '+String(row?.obra_id||'').slice(0,8));}
+  function onChange(payload){const table=payload?.table,event=payload?.eventType||payload?.event;const row=payload?.new||payload?.record||{};const old=payload?.old||{};const id=String(row.id||old.id||JSON.stringify(row));const key=[table,event,id].join(':');if(seen.has(key))return;seen.add(key);if(seen.size>400)seen.clear();const r=role();if(!r)return;
+    if(r==='admin'&&table==='pontos'&&event==='INSERT')notify('📍 Novo ponto registrado',`${nomeFuncionario(row)} registrou ponto na ${nomeObra(row)}.`);
+    else if(r==='funcionario'&&table==='obras'&&event==='INSERT')notify('🏗️ Nova obra cadastrada',`${row.nome||'Uma nova obra'}${row.local?' — '+row.local:''} foi adicionada.`);
+    else if(r==='admin'&&table!=='pontos'&&table!=='obras'&&['INSERT','UPDATE','DELETE'].includes(event)){const label=({equipe:'equipe/funcionário',vales:'vale',fotos_obra:'foto da obra',pdfs_obra:'PDF da obra',designacoes:'designação'})[table]||table;notify('🔄 Sistema atualizado',`Houve uma alteração em ${label}.`);}
+    if(r==='admin'&&typeof window.agendarSincronizacaoRealtime==='function')window.agendarSincronizacaoRealtime();
+    if(r==='funcionario'&&table==='obras'&&event==='INSERT'&&typeof window.carregarDadosPublicosFuncionario==='function')window.carregarDadosPublicosFuncionario();
+  }
+  function connect(){if(!window.supabaseClient||channel)return;try{channel=window.supabaseClient.channel('tre-notificacoes-v51').on('postgres_changes',{event:'*',schema:'public',table:'pontos'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'obras'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'equipe'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'vales'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'fotos_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'pdfs_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'designacoes'},onChange).subscribe(s=>console.log('[TRE notificações]',s));}catch(e){console.warn('Notificações Realtime indisponíveis:',e);}}
+  document.addEventListener('DOMContentLoaded',()=>{update();connect();setTimeout(connect,1200);});
+  // O cliente Supabase pode ser inicializado depois deste bloco em instalações personalizadas.
+  let tentativas=0;const retry=setInterval(()=>{connect();if(channel||++tentativas>20)clearInterval(retry);},1000);
+})();
+
+</script>
+
+<div id="tre-notif-panel" aria-live="polite"><div style="position:sticky;top:0;background:#fff;padding:14px 15px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center"><strong>🔔 Notificações</strong><button type="button" onclick="treLimparNotificacoes()" style="color:#ea580c;font-size:11px;font-weight:800">Limpar</button></div><div id="tre-notif-list"><div class="tre-notif-empty">Nenhuma notificação ainda.</div></div></div>
+<button id="tre-notif-bell" type="button" aria-label="Abrir notificações" onclick="treAlternarNotificacoes()">🔔<span id="tre-notif-count">0</span></button>
+
 </body>
 </html>

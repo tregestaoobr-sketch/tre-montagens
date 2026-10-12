@@ -1,0 +1,19 @@
+T.R.E. Montagens V5.1 — Notificações
+
+Conteúdo: index.html atualizado, logo, manifest PWA e service worker.
+
+O que foi acrescentado:
+- Notificação visual para o administrador quando um novo ponto é inserido.
+- Notificação visual para o funcionário quando uma nova obra é inserida.
+- Avisos ao administrador para alterações nas tabelas de equipe, vales, fotos, PDFs e designações.
+- Botão de sino, contador de não lidas e lista temporária de notificações na sessão.
+- Atualização da lista de obras do funcionário após evento recebido.
+
+IMPORTANTE — configuração do Supabase:
+1. No painel Supabase, abra Database > Publications (ou Replication) e confira se as tabelas public.obras, public.pontos, public.equipe, public.vales, public.fotos_obra, public.pdfs_obra e public.designacoes estão habilitadas para Realtime / supabase_realtime.
+2. Confirme que as políticas de segurança (RLS) permitem que cada papel receba somente os eventos que deve ver. Não desative RLS para fazer as notificações funcionarem.
+3. As notificações são em tempo real enquanto o app está aberto e conectado; a lista é temporária e não é gravada numa tabela.
+4. O funcionário usa login por RPC/token personalizado; dependendo das permissões do projeto, o Supabase Realtime pode não entregar eventos de obras a sessões anônimas. Se isso ocorrer, será necessário criar uma função/estrutura segura no banco para publicar avisos a funcionários, sem expor dados privados.
+5. Este ZIP não muda nem cria tabelas SQL, não apaga dados e não altera as funções de registro/cadastro existentes.
+
+Teste sugerido: abra o app em duas janelas/dispositivos, entre como administrador em uma e funcionário em outra; habilite Realtime para as tabelas; registre um ponto e depois cadastre uma obra.
