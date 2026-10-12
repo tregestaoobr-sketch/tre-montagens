@@ -1,0 +1,9 @@
+T.R.E. Montagens — atualização preparatória de notificações
+
+Arquivos:
+- index.html: preserva o arquivo original e adiciona registro do service worker e uma função manual de permissão.
+- sw.js: mantém cache/offline e acrescenta recepção/exibição de eventos Web Push.
+- manifest.json: preserva os metadados do app.
+
+IMPORTANTE:
+Esta atualização ainda NÃO envia notificações sozinha. O envio real exige configurar chaves VAPID e concluir/publicar a Edge Function do Supabase, com validação de permissões e gravação segura das subscriptions na tabela push_subscriptions. Não publique como solução final antes dessa etapa. Não contém a chave privada VAPID nem service-role key.
