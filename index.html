@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.R.E. Montagens — V5.0 Estável</title>
+  <title>T.R.E. Montagens — V6.0 Notificações</title>
 
   <!-- Configurações PWA e Ícone do App -->
   <link rel="manifest" href="./manifest.json">
@@ -118,9 +118,23 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 
+
+<style id="tre-v6-notificacoes">
+  #tre-notificacoes{position:fixed;right:16px;top:16px;z-index:2000;display:grid;gap:10px;width:min(390px,calc(100vw - 32px));pointer-events:none}
+  .tre-notificacao{pointer-events:auto;display:flex;gap:12px;align-items:flex-start;padding:15px 16px;border:1px solid #fed7aa;border-left:4px solid #f97316;border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 18px 48px rgba(15,23,42,.2);color:#152033;animation:treToastIn .22s ease both}
+  .tre-notificacao-icone{flex:0 0 36px;width:36px;height:36px;display:grid;place-items:center;background:#fff7ed;border-radius:12px;font-size:18px}
+  .tre-notificacao strong{display:block;font-size:13px;font-weight:800;margin-bottom:3px}
+  .tre-notificacao p{font-size:12px;line-height:1.45;color:#475569;margin:0;overflow-wrap:anywhere}
+  .tre-notificacao button{margin-left:auto;border:0;background:transparent;color:#94a3b8;font-size:20px;line-height:1;padding:0 2px}
+  @keyframes treToastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  @media(max-width:640px){#tre-notificacoes{top:10px;right:10px;width:calc(100vw - 20px)}}
+</style>
+
 </head>
 
-<body data-tre-version="5.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+<body data-tre-version="6.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+
+  <div id="tre-notificacoes" aria-live="polite" aria-atomic="false"></div>
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -740,11 +754,11 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
               </p>
             </div>
             
-            <div class="flex gap-2">
-              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Todas</button>
-              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Em Andamento</button>
-              <button onclick="filtrarObrasPatrao('Pronta')" id="filtro-pronta" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Prontas</button>
-              <button onclick="filtrarObrasPatrao('Finalizada')" id="filtro-finalizada" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Finalizadas</button>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="filtrarObrasPatrao('andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">🔨 Em Andamento</button>
+              <button onclick="filtrarObrasPatrao('pronta')" id="filtro-pronta" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">✨ Prontas</button>
+              <button onclick="filtrarObrasPatrao('finalizada')" id="filtro-finalizada" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">🏁 Finalizadas</button>
+              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Todas</button>
             </div>
           </div>
 
@@ -1515,7 +1529,73 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     let fotosObra = [];
     let pdfsObra = [];
     let designacoes = [];
-    let filtroStatusAtual = 'todas';
+
+    /* =========================================================
+       NOTIFICAÇÕES LOCAIS — EVENTOS EM TEMPO REAL
+       Funcionam enquanto o aplicativo estiver aberto/conectado.
+       ========================================================= */
+    let treEmployeeRealtimeChannel = null;
+    const treNotificacoesVistas = new Set();
+
+    function treMostrarNotificacao(titulo, mensagem, icone = '🔔') {
+      const host = document.getElementById('tre-notificacoes');
+      if (!host) return;
+      const card = document.createElement('div');
+      card.className = 'tre-notificacao';
+      const icon = document.createElement('div');
+      icon.className = 'tre-notificacao-icone';
+      icon.textContent = icone;
+      const content = document.createElement('div');
+      content.style.flex = '1';
+      const title = document.createElement('strong');
+      title.textContent = titulo;
+      const body = document.createElement('p');
+      body.textContent = mensagem;
+      content.append(title, body);
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Fechar notificação');
+      close.textContent = '×';
+      close.onclick = () => card.remove();
+      card.append(icon, content, close);
+      host.appendChild(card);
+      while (host.children.length > 4) host.firstElementChild.remove();
+      window.setTimeout(() => card.remove(), 9000);
+
+      // Notificação do sistema somente se o usuário já autorizou.
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+        try {
+          if (navigator.serviceWorker?.controller) {
+            navigator.serviceWorker.ready.then(reg => reg.showNotification(titulo, {
+              body: mensagem, icon: './logo-tre.jpg', tag: 'tre-' + Date.now()
+            })).catch(() => {});
+          } else {
+            new Notification(titulo, { body: mensagem, icon: './logo-tre.jpg' });
+          }
+        } catch (_) {}
+      }
+    }
+
+    function configurarRealtimeFuncionario() {
+      const client = garantirSupabase();
+      try {
+        if (treEmployeeRealtimeChannel) client.removeChannel(treEmployeeRealtimeChannel);
+      } catch (_) {}
+      treEmployeeRealtimeChannel = client
+        .channel('tre-funcionario-obras-v6')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'obras' }, payload => {
+          const obra = payload?.new;
+          if (!obra?.id || treNotificacoesVistas.has('obra-' + obra.id)) return;
+          treNotificacoesVistas.add('obra-' + obra.id);
+          treMostrarNotificacao('Nova obra cadastrada', `${obra.nome || 'Uma nova obra'} foi adicionada. Consulte a lista de obras no aplicativo.`, '🏗️');
+          carregarDadosPublicosFuncionario().catch(() => {});
+        })
+        .subscribe((status, erro) => {
+          if (erro) console.warn('Notificações de obras:', erro);
+        });
+    }
+
+    let filtroStatusAtual = 'andamento';
 
 
     /* =========================================================
@@ -1609,8 +1689,16 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
       } catch (_) {}
       realtimeChannel = supabaseClient
-        .channel('tre-admin-db-changes-v5')
+        .channel('tre-admin-db-changes-v6')
         .on('postgres_changes', { event: '*', schema: 'public' }, agendarSincronizacaoRealtime)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pontos' }, payload => {
+          const ponto = payload?.new;
+          if (!ponto?.id || treNotificacoesVistas.has('ponto-' + ponto.id)) return;
+          treNotificacoesVistas.add('ponto-' + ponto.id);
+          const funcionario = equipe.find(f => String(f.id) === String(ponto.funcionario_id));
+          const obra = obras.find(o => String(o.id) === String(ponto.obra_id));
+          treMostrarNotificacao('Ponto registrado', `${funcionario?.nome || 'Funcionário'} bateu ponto${obra?.nome ? ' na obra ' + obra.nome : ''}, às ${ponto.hora || 'horário não informado'}.`, '⏱️');
+        })
         .subscribe((status, erro) => {
           if (erro) console.error('Erro no Realtime:', erro);
           console.log('Realtime status:', status);
@@ -1882,6 +1970,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     async function entrarComoFuncionario() {
       try {
         await carregarDadosPublicosFuncionario();
+        configurarRealtimeFuncionario();
         mostrarVisao('funcionario');
       } catch (e) { alert('Não foi possível abrir o acesso do funcionário.'); }
     }
@@ -2275,6 +2364,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         return;
       }
 
+      treMostrarNotificacao('Obra cadastrada', `${nome} foi cadastrada e ficará disponível para a equipe.`, '🏗️');
       document.getElementById('obra-nome').value = '';
       document.getElementById('obra-local').value = '';
       carregarDadosDoSupabase();
@@ -2290,7 +2380,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       ['todas', 'andamento', 'pronta', 'finalizada'].forEach(s => {
         const btn = document.getElementById(`filtro-${s}`);
         if (!btn) return;
-        if ((s === 'todas' && status === 'todas') || s.toLowerCase() === status.toLowerCase()) {
+        const statusNormalizado = String(status).toLowerCase().replace('em ', '');
+        if ((s === 'todas' && status === 'todas') || s.toLowerCase() === statusNormalizado) {
           btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition";
         } else {
           btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition";
@@ -3220,6 +3311,13 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') fecharComprovanteVale();
     });
+
+    // Atualiza o cache do PWA para impedir que a versão antiga seja reutilizada.
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Service Worker indisponível:', err));
+      });
+    }
 
   </script>
 </body>
