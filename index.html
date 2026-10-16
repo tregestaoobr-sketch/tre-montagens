@@ -130,7 +130,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 </head>
 
 <body data-tre-version="5.1-notificacoes" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
-  <button id="tre-push-ativar" type="button" onclick="treAtivarNotificacoes()" style="position:fixed;right:12px;bottom:14px;z-index:9999;background:#0f2749;color:white;border:2px solid #fb923c;border-radius:999px;padding:12px 16px;font-weight:800;box-shadow:0 6px 20px #0003">🔔 Ativar notificações</button>
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -1362,9 +1361,9 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     /* =========================================================
        CONFIGURAÇÃO DO SUPABASE + AUTENTICAÇÃO
        ========================================================= */
-    // Chaves abaixo são públicas/anon e podem ficar no frontend. NUNCA coloque service_role aqui.
-    const SUPABASE_URL = (window.SUPABASE_URL || 'https://mnpkredhpecgxcusutme.supabase.co').trim();
-    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || 'sb_publishable_84-orAD-0239PwZd0Ue0Yg_4hfTNeG4').trim();
+    // Credenciais inseridas conforme solicitado:
+    const SUPABASE_URL = (window.SUPABASE_URL || 'https://vjlppbetuqxxfgusqmxf.supabase.co').trim();
+    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || 'sb_publishable_1fJ58_NZXTgATaISERowTQ_vH7ueeex').trim();
 
     let supabaseClient = null;
     let supabaseConfigError = '';
@@ -3302,7 +3301,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 (function(){
   const items=[]; let unread=0; let channel=null; const seen=new Set();
   const $=id=>document.getElementById(id);
-  function role(){if(!$('visao-admin')||!$('visao-funcionario'))return '';if(!$('visao-admin').classList.contains('hidden')&&window.adminAuthenticated)return 'admin';if(!$('visao-funcionario').classList.contains('hidden'))return 'funcionario';return '';}
+  function role(){if(!$('visao-admin')\vert{}\vert{}!$('visao-funcionario'))return '';if(!$('visao-admin').classList.contains('hidden')&&window.adminAuthenticated)return 'admin';if(!$('visao-funcionario').classList.contains('hidden'))return 'funcionario';return '';}
   function update(){const b=$('tre-notif-bell'),c=$('tre-notif-count'),list=$('tre-notif-list');if(!b)return;b.style.display=role()?'flex':'none';c.textContent=String(unread);c.style.display=unread?'flex':'none';if(items.length){list.innerHTML=items.map(n=>`<div class="tre-notif-item"><strong>${esc(n.title)}</strong><div>${esc(n.text)}</div><span class="tre-notif-time">${esc(n.time)}</span></div>`).join('')}else list.innerHTML='<div class="tre-notif-empty">Nenhuma notificação ainda.</div>';}
   function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   window.treAlternarNotificacoes=function(){const p=$('tre-notif-panel');p.classList.toggle('open');if(p.classList.contains('open')){unread=0;update();}};
@@ -3317,9 +3316,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     if(r==='admin'&&typeof window.agendarSincronizacaoRealtime==='function')window.agendarSincronizacaoRealtime();
     if(r==='funcionario'&&table==='obras'&&event==='INSERT'&&typeof window.carregarDadosPublicosFuncionario==='function')window.carregarDadosPublicosFuncionario();
   }
-  function connect(){if(!window.supabaseClient||channel)return;try{channel=window.supabaseClient.channel('tre-notificacoes-v51').on('postgres_changes',{event:'*',schema:'public',table:'pontos'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'obras'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'equipe'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'vales'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'fotos_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'pdfs_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'designacoes'},onChange).subscribe(s=>console.log('[TRE notificações]',s));}catch(e){console.warn('Notificações Realtime indisponíveis:',e);}}
+  function connect(){if(!window.supabaseClient||channel)return;try{channel=window.supabaseClient.channel('tre-notificacoes-v51').on('postgres_changes',{event:'*',schema:'public',table:'pontos'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'obras'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'equipe'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'vales'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'fotos_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:`pdfs_obra`},onChange).on('postgres_changes',{event:'*',schema:'public',table:'designacoes'},onChange).subscribe(s=>console.log('[TRE notificações]',s));}catch(e){console.warn('Notificações Realtime indisponíveis:',e);}}
   document.addEventListener('DOMContentLoaded',()=>{update();connect();setTimeout(connect,1200);});
-  // O cliente Supabase pode ser inicializado depois deste bloco em instalações personalizadas.
   let tentativas=0;const retry=setInterval(()=>{connect();if(channel||++tentativas>20)clearInterval(retry);},1000);
 })();
 
