@@ -130,6 +130,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 </head>
 
 <body data-tre-version="5.1-notificacoes" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+  <button id="tre-push-ativar" type="button" onclick="treAtivarNotificacoes()" style="position:fixed;right:12px;bottom:14px;z-index:9999;background:#0f2749;color:white;border:2px solid #fb923c;border-radius:999px;padding:12px 16px;font-weight:800;box-shadow:0 6px 20px #0003">🔔 Ativar notificações</button>
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -750,10 +751,10 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             </div>
             
             <div class="flex gap-2">
-              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Todas</button>
-              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Em Andamento</button>
+              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Em Andamento</button>
               <button onclick="filtrarObrasPatrao('Pronta')" id="filtro-pronta" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Prontas</button>
               <button onclick="filtrarObrasPatrao('Finalizada')" id="filtro-finalizada" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Finalizadas</button>
+              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Todas</button>
             </div>
           </div>
 
@@ -1383,6 +1384,69 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       console.error(supabaseConfigError, erroConfig);
     }
 
+    // T.R.E. Web Push — a chave pública pode ficar no navegador; a privada fica só nos Secrets do Supabase.
+    const TRE_VAPID_PUBLIC_KEY = 'BDmnJD0XgyaTGqD0yLvZ8PZ2JmQuwBz9Ddi3iawujNPSAYeYrX55sDGzf_P7GnC3RSgld9nLREY_jXNDx3juzoA';
+    const TRE_PUSH_FUNCTION = 'enviar-push';
+    let trePushRegistration = null;
+
+    function treBase64UrlToBytes(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const raw = atob(base64);
+      return Uint8Array.from([...raw].map(ch => ch.charCodeAt(0)));
+    }
+
+    async function treRegistrarServiceWorker() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        throw new Error('Este navegador não oferece notificações push. Abra o app pelo Chrome atualizado.');
+      }
+      trePushRegistration = await navigator.serviceWorker.register('./sw.js');
+      await navigator.serviceWorker.ready;
+      return trePushRegistration;
+    }
+
+    async function treAtivarNotificacoes() {
+      const btn = document.getElementById('tre-push-ativar');
+      try {
+        if (!supabaseClient) throw new Error('Supabase não está conectado.');
+        if (!window.isSecureContext) throw new Error('Abra o aplicativo pelo endereço HTTPS do GitHub Pages.');
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') throw new Error('Permissão de notificação não autorizada. Ative nas configurações do Chrome/celular.');
+        const reg = await treRegistrarServiceWorker();
+        let subscription = await reg.pushManager.getSubscription();
+        if (!subscription) subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: treBase64UrlToBytes(TRE_VAPID_PUBLIC_KEY)
+        });
+        const sess = typeof obterSessaoFuncionario === 'function' ? obterSessaoFuncionario() : null;
+        const { data: authData } = await supabaseClient.auth.getSession();
+        const role = authData?.session ? 'patrao' : (sess?.token ? 'funcionario' : null);
+        if (!role) throw new Error('Entre primeiro como patrão ou funcionário e depois toque em Ativar notificações.');
+        const employeeId = role === 'funcionario' ? (sess.funcionario_id || sess.employee_id || sess.id || null) : null;
+        const { error } = await supabaseClient.functions.invoke(TRE_PUSH_FUNCTION, {
+          body: { action: 'subscribe', subscription: subscription.toJSON(), user_role: role, employee_id: employeeId }
+        });
+        if (error) throw error;
+        if (btn) btn.textContent = '🔔 Notificações ativadas';
+        alert('Notificações ativadas neste celular.');
+      } catch (e) {
+        console.error('T.R.E. push:', e);
+        alert('Não consegui ativar as notificações: ' + (e?.message || 'erro desconhecido'));
+      }
+    }
+
+    async function treEnviarAvisoPush(payload) {
+      try {
+        const { error } = await supabaseClient.functions.invoke(TRE_PUSH_FUNCTION, { body: payload });
+        if (error) console.warn('Aviso push não enviado:', error.message || error);
+      } catch (e) { console.warn('Aviso push não enviado:', e); }
+    }
+
+    // Registra o SW mesmo antes da inscrição para manter o comportamento PWA/offline.
+    if ('serviceWorker' in navigator && window.isSecureContext) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW T.R.E.:', e)));
+    }
+
     function gerarId() {
       if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
       return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -1524,7 +1588,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     let fotosObra = [];
     let pdfsObra = [];
     let designacoes = [];
-    let filtroStatusAtual = 'todas';
+    let filtroStatusAtual = 'Em Andamento';
 
 
     /* =========================================================
@@ -2031,6 +2095,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         if (erroPonto) throw erroPonto;
         if (!resultadoPonto?.ok) throw new Error(resultadoPonto?.message || 'Não foi possível registrar o ponto.');
 
+        // O ponto já foi confirmado pelo Supabase; agora solicita o aviso ao patrão.
+        await treEnviarAvisoPush({ action: 'point', title: 'Ponto registrado', body: 'Um funcionário acabou de registrar o ponto.', employee_id: funcId, obra_id: obraId });
         alert("📍 Ponto e geolocalização registrados com sucesso!");
         document.getElementById('ponto-pin').value = '';
         carregarDadosDoSupabase();
@@ -2284,6 +2350,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         return;
       }
 
+      await treEnviarAvisoPush({ action: 'obra', title: 'Nova obra disponível', body: `Nova obra cadastrada: ${nome}`, obra_id: novaObra.id });
       document.getElementById('obra-nome').value = '';
       document.getElementById('obra-local').value = '';
       carregarDadosDoSupabase();
@@ -3255,40 +3322,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
   // O cliente Supabase pode ser inicializado depois deste bloco em instalações personalizadas.
   let tentativas=0;const retry=setInterval(()=>{connect();if(channel||++tentativas>20)clearInterval(retry);},1000);
 })();
-
-
-    /* ===== T.R.E. PUSH: registro do service worker (sem remover funções existentes) ===== */
-    (function trePrepararPush() {
-      if (!('serviceWorker' in navigator)) {
-        console.warn('[TRE Push] Este navegador não oferece suporte a service workers.');
-        return;
-      }
-      window.treServiceWorkerReady = navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(reg => {
-          console.log('[TRE Push] Service worker registrado:', reg.scope);
-          return reg;
-        })
-        .catch(err => {
-          console.warn('[TRE Push] Não foi possível registrar o service worker:', err);
-          return null;
-        });
-    })();
-
-    // Função preparada para ser ligada ao botão de ativação após configurar VAPID e a Edge Function.
-    // Não pede permissão automaticamente nem altera o fluxo atual do aplicativo.
-    window.treSolicitarPermissaoNotificacoes = async function () {
-      if (!('Notification' in window)) {
-        alert('Este navegador não oferece suporte a notificações.');
-        return false;
-      }
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        alert('As notificações não foram autorizadas. Ative a permissão nas configurações do navegador.');
-        return false;
-      }
-      alert('Permissão concedida neste aparelho. Falta concluir a configuração do envio push no Supabase.');
-      return true;
-    };
 
 </script>
 

@@ -1,9 +1,22 @@
-T.R.E. Montagens — atualização preparatória de notificações
+T.R.E. MONTAGENS — PREPARAÇÃO PARA NOTIFICAÇÕES PUSH
 
-Arquivos:
-- index.html: preserva o arquivo original e adiciona registro do service worker e uma função manual de permissão.
-- sw.js: mantém cache/offline e acrescenta recepção/exibição de eventos Web Push.
-- manifest.json: preserva os metadados do app.
+Importante: este ZIP ainda NÃO ativa notificações push. Ele reúne os arquivos atuais e um par VAPID recém-gerado para a próxima etapa. Não substitua o site publicado por este ZIP esperando que o push funcione: o index.html e sw.js aqui são cópias dos arquivos atuais.
 
-IMPORTANTE:
-Esta atualização ainda NÃO envia notificações sozinha. O envio real exige configurar chaves VAPID e concluir/publicar a Edge Function do Supabase, com validação de permissões e gravação segura das subscriptions na tabela push_subscriptions. Não publique como solução final antes dessa etapa. Não contém a chave privada VAPID nem service-role key.
+O que já existe:
+- Supabase tabela public.push_subscriptions criada, segundo o histórico da configuração.
+- Notificações internas/Reatime no aplicativo.
+- Service worker atual de cache/offline.
+
+O que ainda falta implementar e testar:
+1. Código de inscrição PushSubscription no navegador, usando a chave pública VAPID.
+2. Endpoint seguro para guardar/remover subscriptions e distinguir patrão/funcionário.
+3. Função Supabase que envia Web Push usando a chave privada como Secret.
+4. Disparos após o ponto ser confirmado e após a obra ser cadastrada, sem expor credenciais administrativas no navegador.
+5. Teste real no Android com o app instalado pelo Chrome e permissão de notificação autorizada.
+
+Secrets para configurar depois que a função de envio estiver pronta:
+VAPID_PUBLIC_KEY = valor no CHAVES_VAPID.txt
+VAPID_PRIVATE_KEY = valor no CHAVES_VAPID.txt (manter secreto)
+VAPID_SUBJECT = mailto:admin@tre-montagens.com
+
+Não crie nem publique uma função usando o código de exemplo padrão. Não coloque a chave privada em index.html.
