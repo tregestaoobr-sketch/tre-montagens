@@ -118,11 +118,9 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 
-
-
 </head>
 
-<body data-tre-version="5.0-estavel" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+<body data-tre-version="5.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -743,10 +741,10 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             </div>
             
             <div class="flex gap-2">
-              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Em Andamento</button>
+              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Todas</button>
+              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Em Andamento</button>
               <button onclick="filtrarObrasPatrao('Pronta')" id="filtro-pronta" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Prontas</button>
               <button onclick="filtrarObrasPatrao('Finalizada')" id="filtro-finalizada" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Finalizadas</button>
-              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Todas</button>
             </div>
           </div>
 
@@ -1517,7 +1515,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     let fotosObra = [];
     let pdfsObra = [];
     let designacoes = [];
-    let filtroStatusAtual = 'Em Andamento';
+    let filtroStatusAtual = 'todas';
 
 
     /* =========================================================
@@ -2023,6 +2021,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         });
         if (erroPonto) throw erroPonto;
         if (!resultadoPonto?.ok) throw new Error(resultadoPonto?.message || 'Não foi possível registrar o ponto.');
+
         alert("📍 Ponto e geolocalização registrados com sucesso!");
         document.getElementById('ponto-pin').value = '';
         carregarDadosDoSupabase();
@@ -2275,6 +2274,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         alert("Erro ao cadastrar obra: " + error.message);
         return;
       }
+
       document.getElementById('obra-nome').value = '';
       document.getElementById('obra-local').value = '';
       carregarDadosDoSupabase();
@@ -2969,7 +2969,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             <p class="text-xs">Obra: ${obra ? obra.nome : 'Geral'}</p>
             <p class="text-sm font-bold">Valor: R$ ${Number(v.valor).toFixed(2)}</p>
             <p class="text-xs italic">Obs: "${v.descricao || 'Sem descrição'}"</p>
-            ${v.comprovante ? `<button type="button" onclick="abrirComprovanteVale('${v.id}')" class="inline-block mt-1 text-xs bg-white text-gray-800 font-bold px-3 py-1 rounded border shadow-sm">📎 Ver / Baixar Comprovante</button>` : ''}
             <div class="pt-2 text-right">
               <button onclick="excluirVale('${v.id}')" class="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded hover:bg-red-700">Excluir Lançamento</button>
             </div>
@@ -3222,8 +3221,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (event.key === 'Escape') fecharComprovanteVale();
     });
 
-</script>
-
-
+  </script>
 </body>
 </html>
