@@ -119,17 +119,10 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 </style>
 
 
-<style id="tre-notificacoes-v51">
-#tre-notif-bell{position:fixed;right:16px;bottom:18px;z-index:9990;border:0;border-radius:999px;width:56px;height:56px;background:#172554;color:#fff;box-shadow:0 8px 28px #0f172a40;font-size:22px;display:none;align-items:center;justify-content:center}
-#tre-notif-count{position:absolute;right:-2px;top:-3px;background:#f97316;color:white;border-radius:99px;min-width:21px;height:21px;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 5px;border:2px solid white}
-#tre-notif-panel{position:fixed;right:14px;bottom:84px;width:min(370px,calc(100vw - 28px));max-height:min(65dvh,480px);overflow:auto;z-index:9991;background:white;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 18px 55px #02081738;display:none;color:#172033}
-#tre-notif-panel.open{display:block}.tre-notif-item{padding:12px 14px;border-bottom:1px solid #eef2f7;font-size:13px;line-height:1.4}.tre-notif-item:last-child{border-bottom:0}.tre-notif-time{display:block;color:#94a3b8;font-size:10px;margin-top:4px}.tre-notif-toast{position:fixed;z-index:9992;top:14px;left:50%;transform:translateX(-50%);width:min(430px,calc(100vw - 28px));background:#0f172a;color:white;padding:14px 16px;border-left:4px solid #f97316;border-radius:14px;box-shadow:0 12px 36px #02081755;font-size:13px;animation:treNotifIn .2s ease both}.tre-notif-toast strong{display:block;margin-bottom:3px}.tre-notif-empty{padding:20px;text-align:center;color:#64748b;font-size:12px}
-@keyframes treNotifIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
-</style>
 
 </head>
 
-<body data-tre-version="5.1-notificacoes" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+<body data-tre-version="5.0-estavel" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
 
   <!-- =========================================================
        TELA DE LOGIN
@@ -1361,9 +1354,9 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     /* =========================================================
        CONFIGURAÇÃO DO SUPABASE + AUTENTICAÇÃO
        ========================================================= */
-    // Credenciais inseridas conforme solicitado:
-    const SUPABASE_URL = (window.SUPABASE_URL || 'https://vjlppbetuqxxfgusqmxf.supabase.co').trim();
-    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || 'sb_publishable_1fJ58_NZXTgATaISERowTQ_vH7ueeex').trim();
+    // Chaves abaixo são públicas/anon e podem ficar no frontend. NUNCA coloque service_role aqui.
+    const SUPABASE_URL = (window.SUPABASE_URL || 'https://mnpkredhpecgxcusutme.supabase.co').trim();
+    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || 'sb_publishable_84-orAD-0239PwZd0Ue0Yg_4hfTNeG4').trim();
 
     let supabaseClient = null;
     let supabaseConfigError = '';
@@ -1381,69 +1374,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     } catch (erroConfig) {
       supabaseConfigError = 'Configuração do Supabase inválida: ' + (erroConfig?.message || erroConfig);
       console.error(supabaseConfigError, erroConfig);
-    }
-
-    // T.R.E. Web Push — a chave pública pode ficar no navegador; a privada fica só nos Secrets do Supabase.
-    const TRE_VAPID_PUBLIC_KEY = 'BDmnJD0XgyaTGqD0yLvZ8PZ2JmQuwBz9Ddi3iawujNPSAYeYrX55sDGzf_P7GnC3RSgld9nLREY_jXNDx3juzoA';
-    const TRE_PUSH_FUNCTION = 'enviar-push';
-    let trePushRegistration = null;
-
-    function treBase64UrlToBytes(base64String) {
-      const padding = '='.repeat((4 - base64String.length % 4) % 4);
-      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-      const raw = atob(base64);
-      return Uint8Array.from([...raw].map(ch => ch.charCodeAt(0)));
-    }
-
-    async function treRegistrarServiceWorker() {
-      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        throw new Error('Este navegador não oferece notificações push. Abra o app pelo Chrome atualizado.');
-      }
-      trePushRegistration = await navigator.serviceWorker.register('./sw.js');
-      await navigator.serviceWorker.ready;
-      return trePushRegistration;
-    }
-
-    async function treAtivarNotificacoes() {
-      const btn = document.getElementById('tre-push-ativar');
-      try {
-        if (!supabaseClient) throw new Error('Supabase não está conectado.');
-        if (!window.isSecureContext) throw new Error('Abra o aplicativo pelo endereço HTTPS do GitHub Pages.');
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') throw new Error('Permissão de notificação não autorizada. Ative nas configurações do Chrome/celular.');
-        const reg = await treRegistrarServiceWorker();
-        let subscription = await reg.pushManager.getSubscription();
-        if (!subscription) subscription = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: treBase64UrlToBytes(TRE_VAPID_PUBLIC_KEY)
-        });
-        const sess = typeof obterSessaoFuncionario === 'function' ? obterSessaoFuncionario() : null;
-        const { data: authData } = await supabaseClient.auth.getSession();
-        const role = authData?.session ? 'patrao' : (sess?.token ? 'funcionario' : null);
-        if (!role) throw new Error('Entre primeiro como patrão ou funcionário e depois toque em Ativar notificações.');
-        const employeeId = role === 'funcionario' ? (sess.funcionario_id || sess.employee_id || sess.id || null) : null;
-        const { error } = await supabaseClient.functions.invoke(TRE_PUSH_FUNCTION, {
-          body: { action: 'subscribe', subscription: subscription.toJSON(), user_role: role, employee_id: employeeId }
-        });
-        if (error) throw error;
-        if (btn) btn.textContent = '🔔 Notificações ativadas';
-        alert('Notificações ativadas neste celular.');
-      } catch (e) {
-        console.error('T.R.E. push:', e);
-        alert('Não consegui ativar as notificações: ' + (e?.message || 'erro desconhecido'));
-      }
-    }
-
-    async function treEnviarAvisoPush(payload) {
-      try {
-        const { error } = await supabaseClient.functions.invoke(TRE_PUSH_FUNCTION, { body: payload });
-        if (error) console.warn('Aviso push não enviado:', error.message || error);
-      } catch (e) { console.warn('Aviso push não enviado:', e); }
-    }
-
-    // Registra o SW mesmo antes da inscrição para manter o comportamento PWA/offline.
-    if ('serviceWorker' in navigator && window.isSecureContext) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW T.R.E.:', e)));
     }
 
     function gerarId() {
@@ -2093,9 +2023,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         });
         if (erroPonto) throw erroPonto;
         if (!resultadoPonto?.ok) throw new Error(resultadoPonto?.message || 'Não foi possível registrar o ponto.');
-
-        // O ponto já foi confirmado pelo Supabase; agora solicita o aviso ao patrão.
-        await treEnviarAvisoPush({ action: 'point', title: 'Ponto registrado', body: 'Um funcionário acabou de registrar o ponto.', employee_id: funcId, obra_id: obraId });
         alert("📍 Ponto e geolocalização registrados com sucesso!");
         document.getElementById('ponto-pin').value = '';
         carregarDadosDoSupabase();
@@ -2348,8 +2275,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         alert("Erro ao cadastrar obra: " + error.message);
         return;
       }
-
-      await treEnviarAvisoPush({ action: 'obra', title: 'Nova obra disponível', body: `Nova obra cadastrada: ${nome}`, obra_id: novaObra.id });
       document.getElementById('obra-nome').value = '';
       document.getElementById('obra-local').value = '';
       carregarDadosDoSupabase();
@@ -3297,34 +3222,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (event.key === 'Escape') fecharComprovanteVale();
     });
 
-  
-(function(){
-  const items=[]; let unread=0; let channel=null; const seen=new Set();
-  const $=id=>document.getElementById(id);
-  function role(){if(!$('visao-admin')\vert{}\vert{}!$('visao-funcionario'))return '';if(!$('visao-admin').classList.contains('hidden')&&window.adminAuthenticated)return 'admin';if(!$('visao-funcionario').classList.contains('hidden'))return 'funcionario';return '';}
-  function update(){const b=$('tre-notif-bell'),c=$('tre-notif-count'),list=$('tre-notif-list');if(!b)return;b.style.display=role()?'flex':'none';c.textContent=String(unread);c.style.display=unread?'flex':'none';if(items.length){list.innerHTML=items.map(n=>`<div class="tre-notif-item"><strong>${esc(n.title)}</strong><div>${esc(n.text)}</div><span class="tre-notif-time">${esc(n.time)}</span></div>`).join('')}else list.innerHTML='<div class="tre-notif-empty">Nenhuma notificação ainda.</div>';}
-  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  window.treAlternarNotificacoes=function(){const p=$('tre-notif-panel');p.classList.toggle('open');if(p.classList.contains('open')){unread=0;update();}};
-  window.treLimparNotificacoes=function(){items.length=0;unread=0;update();};
-  function notify(title,text){const r=role();if(!r)return;items.unshift({title,text,time:new Date().toLocaleString('pt-BR')});if(items.length>30)items.pop();unread++;update();const toast=document.createElement('div');toast.className='tre-notif-toast';toast.innerHTML=`<strong>${esc(title)}</strong>${esc(text)}`;document.body.appendChild(toast);setTimeout(()=>toast.remove(),5500);try{if('vibrate'in navigator)navigator.vibrate([80,40,80]);}catch(_){} }
-  function nomeFuncionario(row){return row?.funcionario_nome||row?.nome_funcionario||row?.funcionario||('Funcionário '+String(row?.funcionario_id||'').slice(0,8));}
-  function nomeObra(row){return row?.obra_nome||row?.nome_obra||row?.obra||('obra '+String(row?.obra_id||'').slice(0,8));}
-  function onChange(payload){const table=payload?.table,event=payload?.eventType||payload?.event;const row=payload?.new||payload?.record||{};const old=payload?.old||{};const id=String(row.id||old.id||JSON.stringify(row));const key=[table,event,id].join(':');if(seen.has(key))return;seen.add(key);if(seen.size>400)seen.clear();const r=role();if(!r)return;
-    if(r==='admin'&&table==='pontos'&&event==='INSERT')notify('📍 Novo ponto registrado',`${nomeFuncionario(row)} registrou ponto na ${nomeObra(row)}.`);
-    else if(r==='funcionario'&&table==='obras'&&event==='INSERT')notify('🏗️ Nova obra cadastrada',`${row.nome||'Uma nova obra'}${row.local?' — '+row.local:''} foi adicionada.`);
-    else if(r==='admin'&&table!=='pontos'&&table!=='obras'&&['INSERT','UPDATE','DELETE'].includes(event)){const label=({equipe:'equipe/funcionário',vales:'vale',fotos_obra:'foto da obra',pdfs_obra:'PDF da obra',designacoes:'designação'})[table]||table;notify('🔄 Sistema atualizado',`Houve uma alteração em ${label}.`);}
-    if(r==='admin'&&typeof window.agendarSincronizacaoRealtime==='function')window.agendarSincronizacaoRealtime();
-    if(r==='funcionario'&&table==='obras'&&event==='INSERT'&&typeof window.carregarDadosPublicosFuncionario==='function')window.carregarDadosPublicosFuncionario();
-  }
-  function connect(){if(!window.supabaseClient||channel)return;try{channel=window.supabaseClient.channel('tre-notificacoes-v51').on('postgres_changes',{event:'*',schema:'public',table:'pontos'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'obras'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'equipe'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'vales'},onChange).on('postgres_changes',{event:'*',schema:'public',table:'fotos_obra'},onChange).on('postgres_changes',{event:'*',schema:'public',table:`pdfs_obra`},onChange).on('postgres_changes',{event:'*',schema:'public',table:'designacoes'},onChange).subscribe(s=>console.log('[TRE notificações]',s));}catch(e){console.warn('Notificações Realtime indisponíveis:',e);}}
-  document.addEventListener('DOMContentLoaded',()=>{update();connect();setTimeout(connect,1200);});
-  let tentativas=0;const retry=setInterval(()=>{connect();if(channel||++tentativas>20)clearInterval(retry);},1000);
-})();
-
 </script>
 
-<div id="tre-notif-panel" aria-live="polite"><div style="position:sticky;top:0;background:#fff;padding:14px 15px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center"><strong>🔔 Notificações</strong><button type="button" onclick="treLimparNotificacoes()" style="color:#ea580c;font-size:11px;font-weight:800">Limpar</button></div><div id="tre-notif-list"><div class="tre-notif-empty">Nenhuma notificação ainda.</div></div></div>
-<button id="tre-notif-bell" type="button" aria-label="Abrir notificações" onclick="treAlternarNotificacoes()">🔔<span id="tre-notif-count">0</span></button>
 
 </body>
 </html>
