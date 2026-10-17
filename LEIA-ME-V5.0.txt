@@ -51,3 +51,10 @@ para guardar funcionários, obras, pontos ou designações.
 
 
 V5.2 — correções pontuais: removido o histórico de pontos recentes da área do funcionário; obras finalizadas não aparecem nos seletores de ponto/vale/fotos do funcionário; rótulo corrigido para Complemento; diária base do colaborador é sugerida automaticamente ao designar obra do tipo Diária. A coluna existente no banco continua chamada componente para evitar migração e preservar compatibilidade.
+
+
+ATUALIZACAO V5.3 - CRONOGRAMA
+1. Substitua o index.html atual pelo index.html desta entrega.
+2. No Supabase > SQL Editor, execute uma vez o arquivo SQL_DATAS_CRONOGRAMA.sql incluído no pacote. Ele adiciona apenas as colunas de datas e um gatilho; não apaga dados.
+3. O cronograma usa pontos existentes para contar dias únicos por funcionário/obra. O valor financeiro mostrado é estimado pela diária atual do funcionário; para valores históricos exatos seria preciso guardar a diária aplicada em cada ponto.
+4. Depois de publicar, atualize a página sem cache (no celular, feche a aba e abra novamente; se persistir, limpe os dados/cache do site).

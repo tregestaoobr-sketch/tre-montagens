@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.R.E. Montagens — V5.0 Estável</title>
+  <title>T.R.E. Montagens — V5.3 Cronograma</title>
 
   <!-- Configurações PWA e Ícone do App -->
   <link rel="manifest" href="./manifest.json">
@@ -691,6 +691,14 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       </button>
 
       <button
+        id="tab-btn-cronograma"
+        onclick="mudarAbaAdmin('cronograma')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>🗓️</span> Cronograma
+      </button>
+
+      <button
         id="tab-btn-equipe"
         onclick="mudarAbaAdmin('equipe')"
         class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
@@ -784,6 +792,21 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
           ></ul>
         </div>
 
+
+        <!-- MODAL DETALHES / DATAS DA OBRA -->
+        <div id="modal-detalhes-obra" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) fecharModalDetalhesObra()">
+          <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border-t-4 border-orange-500" role="dialog" aria-modal="true" aria-labelledby="modal-detalhes-obra-titulo">
+            <div class="flex justify-between items-start gap-3 mb-5 border-b pb-3">
+              <div><p class="text-[10px] uppercase tracking-wider font-extrabold text-orange-600">Detalhes da obra</p><h3 id="modal-detalhes-obra-titulo" class="text-xl font-bold text-blue-950"></h3><p id="modal-detalhes-obra-status" class="text-sm text-gray-500 mt-1"></p></div>
+              <button type="button" onclick="fecharModalDetalhesObra()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-1 rounded-lg">✕</button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 rounded-xl bg-slate-50 border border-slate-200 p-4"><span class="text-xl">📅</span><div><p class="text-xs font-semibold text-gray-500">Início da obra</p><p id="modal-detalhes-obra-inicio" class="font-bold text-blue-950 mt-1">Data não registrada</p></div></div>
+              <div id="bloco-data-termino-obra" class="hidden flex items-start gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-4"><span class="text-xl">🏁</span><div><p class="text-xs font-semibold text-emerald-700">Finalizada em</p><p id="modal-detalhes-obra-termino" class="font-bold text-emerald-900 mt-1">Data não registrada</p></div></div>
+              <p id="modal-detalhes-obra-aviso" class="text-xs text-gray-500"></p>
+            </div>
+          </div>
+        </div>
 
         <!-- MODAL GALERIA -->
         <div
@@ -964,6 +987,24 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       <!-- =====================================================
            ABA EQUIPE
            ===================================================== -->
+      <!-- ABA CRONOGRAMA: resumo calculado dos registros existentes -->
+      <div id="aba-cronograma" class="aba-content hidden space-y-6">
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500 space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div><h3 class="text-lg font-bold text-blue-950">🗓️ Cronograma de Obras</h3><p class="text-sm text-gray-500">Datas, duração, equipe e diárias calculadas pelos pontos existentes.</p></div>
+            <button onclick="renderizarCronograma()" class="bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm px-4 py-2 rounded-xl">↻ Atualizar</button>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="cronograma-resumo"></div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input id="cronograma-busca" oninput="renderizarCronograma()" type="search" placeholder="Buscar obra, local ou complemento..." class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <select id="cronograma-filtro-status" onchange="renderizarCronograma()" class="p-3 border rounded-xl bg-gray-50"><option value="todas">Todas as situações</option><option value="Em Andamento">Em andamento</option><option value="Pronta">Prontas</option><option value="Finalizada">Finalizadas</option></select>
+            <select id="cronograma-ordem" onchange="renderizarCronograma()" class="p-3 border rounded-xl bg-gray-50"><option value="recentes">Mais recentes primeiro</option><option value="antigas">Mais antigas primeiro</option><option value="nome">Nome da obra</option></select>
+          </div>
+          <div id="cronograma-lista" class="space-y-3"></div>
+          <p class="text-xs text-gray-500">Observação: a duração usa a data de início até hoje (ou até a finalização). Dias trabalhados contam dias distintos com ponto registrado, por funcionário e obra. Datas antigas sem histórico confiável não são inventadas.</p>
+        </div>
+      </div>
+
       <div id="aba-equipe" class="aba-content hidden space-y-6">
 
         <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500">
@@ -1603,6 +1644,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       populardropdowns();
       carregarHistoricoPontosFuncionario();
       renderizarObras();
+      renderizarCronograma();
       renderizarEquipe();
       renderizarDesignacoes();
       carregarPresencas();
@@ -1997,7 +2039,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const abaElement = document.getElementById(`aba-${aba}`);
       if (abaElement) abaElement.classList.remove('hidden');
 
-      const abas = ['obras', 'equipe', 'designar', 'presencas', 'comprovantes', 'fechamento'];
+      const abas = ['obras', 'cronograma', 'equipe', 'designar', 'presencas', 'comprovantes', 'fechamento'];
       abas.forEach(a => {
         const btn = document.getElementById(`tab-btn-${a}`);
         if (!btn) return;
@@ -2007,6 +2049,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       });
 
       if (aba === 'obras') renderizarObras();
+      if (aba === 'cronograma') renderizarCronograma();
       if (aba === 'equipe') renderizarEquipe();
       if (aba === 'designar') renderizarDesignacoes();
       if (aba === 'presencas') carregarPresencas();
@@ -2307,6 +2350,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         componente: componente,
         representante: representante,
         status: 'Em Andamento',
+        inicio_em: (() => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); })(),
         atualizado_por: 'Patrão'
       };
 
@@ -2343,6 +2387,40 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       renderizarObras();
     }
 
+    function formatarDataObra(valor) {
+      if (!valor) return '';
+      const texto = String(valor).slice(0, 10);
+      const partes = texto.split('-');
+      if (partes.length !== 3) return texto;
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function abrirModalDetalhesObra(id) {
+      const obra = obras.find(o => String(o.id) === String(id));
+      if (!obra) { alert('Obra não encontrada.'); return; }
+      const status = obra.status || 'Em Andamento';
+      const inicio = obra.inicio_em || (obra.created_at ? String(obra.created_at).slice(0, 10) : null);
+      const termino = obra.finalizada_em || null;
+      document.getElementById('modal-detalhes-obra-titulo').textContent = obra.nome || 'Obra';
+      document.getElementById('modal-detalhes-obra-status').textContent = `Status: ${status}`;
+      document.getElementById('modal-detalhes-obra-inicio').textContent = inicio ? formatarDataObra(inicio) : 'Data não registrada';
+      const blocoTermino = document.getElementById('bloco-data-termino-obra');
+      const aviso = document.getElementById('modal-detalhes-obra-aviso');
+      if (status === 'Finalizada') {
+        blocoTermino.classList.remove('hidden');
+        document.getElementById('modal-detalhes-obra-termino').textContent = termino ? formatarDataObra(termino) : 'Data não registrada';
+        aviso.textContent = '';
+      } else {
+        blocoTermino.classList.add('hidden');
+        aviso.textContent = 'A data de término aparecerá aqui quando a obra for marcada como finalizada.';
+      }
+      document.getElementById('modal-detalhes-obra').classList.remove('hidden');
+    }
+
+    function fecharModalDetalhesObra() {
+      document.getElementById('modal-detalhes-obra')?.classList.add('hidden');
+    }
+
     function renderizarObras() {
       const lista = document.getElementById('lista-obras');
       if (!lista) return;
@@ -2376,7 +2454,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
           <li class="py-4 px-3 bg-white/60 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
             <div>
               <div class="flex items-center gap-2">
-                <p class="font-bold text-blue-950 text-base">${o.nome}</p>
+                <button type="button" onclick="abrirModalDetalhesObra('${o.id}')" class="font-bold text-blue-950 text-base text-left hover:text-orange-600 underline decoration-dotted underline-offset-4">${o.nome}</button>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeCor}">
                   ${statusObra}
                 </span>
@@ -2408,6 +2486,87 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       }).join('');
     }
 
+    function treHojeISO() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function treDataISO(valor) {
+      if (!valor) return null;
+      const v = String(valor).trim();
+      let m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+      m = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+      return null;
+    }
+
+    function treDiasEntre(inicio, fim) {
+      const a = treDataISO(inicio), b = treDataISO(fim);
+      if (!a || !b) return null;
+      const [ay,am,ad] = a.split('-').map(Number), [by,bm,bd] = b.split('-').map(Number);
+      const diff = Math.floor((Date.UTC(by,bm-1,bd)-Date.UTC(ay,am-1,ad))/86400000);
+      return diff < 0 ? null : diff + 1;
+    }
+
+    function trePontosDaObra(obraId) {
+      return pontos.filter(p => String(p.obra_id) === String(obraId));
+    }
+
+    function treResumoEquipeObra(obra) {
+      const mapa = new Map();
+      trePontosDaObra(obra.id).forEach(p => {
+        const fid = String(p.funcionario_id || '');
+        const data = treDataISO(p.data || p.created_at);
+        if (!fid || !data) return;
+        if (!mapa.has(fid)) mapa.set(fid, new Set());
+        mapa.get(fid).add(data);
+      });
+      return [...mapa.entries()].map(([fid, dias]) => {
+        const f = equipe.find(x => String(x.id) === fid);
+        return { nome: f?.nome || 'Funcionário removido', dias: dias.size, diaria: Number(String(f?.diaria ?? '0').replace(',', '.')) || 0, total: dias.size * (Number(String(f?.diaria ?? '0').replace(',', '.')) || 0) };
+      }).sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    }
+
+    function renderizarCronograma() {
+      const lista = document.getElementById('cronograma-lista');
+      const resumo = document.getElementById('cronograma-resumo');
+      if (!lista || !resumo) return;
+      const finalizadas = obras.filter(o => o.status === 'Finalizada').length;
+      const prontas = obras.filter(o => o.status === 'Pronta').length;
+      const andamento = obras.filter(o => !o.status || o.status === 'Em Andamento').length;
+      const totalPontos = pontos.length;
+      const cards = [['Total de obras', obras.length, '🏗️'], ['Em andamento', andamento, '🔨'], ['Prontas', prontas, '✨'], ['Finalizadas', finalizadas, '🏁']];
+      resumo.innerHTML = cards.map(([t,n,ico]) => `<div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs text-slate-500 font-semibold">${ico} ${t}</p><p class="text-2xl font-extrabold text-blue-950 mt-1">${n}</p></div>`).join('');
+      const busca = (document.getElementById('cronograma-busca')?.value || '').trim().toLocaleLowerCase('pt-BR');
+      const filtro = document.getElementById('cronograma-filtro-status')?.value || 'todas';
+      const ordem = document.getElementById('cronograma-ordem')?.value || 'recentes';
+      let itens = obras.filter(o => {
+        const status = o.status || 'Em Andamento';
+        const texto = [o.nome,o.local,o.componente,o.representante].filter(Boolean).join(' ').toLocaleLowerCase('pt-BR');
+        return (filtro === 'todas' || status === filtro) && (!busca || texto.includes(busca));
+      });
+      itens.sort((a,b) => {
+        if (ordem === 'nome') return String(a.nome||'').localeCompare(String(b.nome||''), 'pt-BR');
+        const da = treDataISO(a.inicio_em || a.created_at) || '';
+        const db = treDataISO(b.inicio_em || b.created_at) || '';
+        return ordem === 'antigas' ? da.localeCompare(db) : db.localeCompare(da);
+      });
+      if (!itens.length) { lista.innerHTML = '<div class="rounded-xl border border-dashed p-6 text-center text-sm text-gray-500">Nenhuma obra encontrada com esses filtros.</div>'; return; }
+      lista.innerHTML = itens.map(o => {
+        const status = o.status || 'Em Andamento';
+        const inicio = treDataISO(o.inicio_em || o.created_at);
+        const fim = status === 'Finalizada' ? treDataISO(o.finalizada_em) : null;
+        const duracao = inicio ? treDiasEntre(inicio, fim || treHojeISO()) : null;
+        const equipeObra = treResumoEquipeObra(o);
+        const diasEquipe = equipeObra.reduce((n,f)=>n+f.dias,0);
+        const totalDiarias = equipeObra.reduce((n,f)=>n+f.total,0);
+        const badge = status === 'Finalizada' ? 'bg-emerald-100 text-emerald-800' : status === 'Pronta' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+        const listaEquipe = equipeObra.length ? equipeObra.map(f => `<div class="flex justify-between gap-3 text-xs py-1 border-b last:border-0"><span class="text-slate-700">${f.nome}</span><span class="font-semibold text-slate-800 whitespace-nowrap">${f.dias} dia(s) · R$ ${f.total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`).join('') : '<p class="text-xs text-gray-500">Nenhum ponto de funcionário registrado nesta obra.</p>';
+        return `<article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3"><div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h4 class="font-extrabold text-blue-950">${o.nome || 'Obra sem nome'}</h4><span class="rounded-full px-2 py-1 text-[10px] font-bold ${badge}">${status}</span></div><p class="text-xs text-gray-500 mt-1">📍 ${o.local || 'Local não informado'}${o.componente ? ' · Complemento: '+o.componente : ''}</p>${o.representante ? `<p class="text-xs text-gray-500 mt-1">👷 Representante: ${o.representante}</p>` : ''}</div><button onclick="abrirModalDetalhesObra('${o.id}')" class="shrink-0 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2">Ver datas</button></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4"><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Início</p><p class="text-sm font-bold">${inicio ? formatarDataObra(inicio) : 'Não registrada'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Término</p><p class="text-sm font-bold">${status === 'Finalizada' ? (fim ? formatarDataObra(fim) : 'Não registrada') : 'Em aberto'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Duração corrida</p><p class="text-sm font-bold">${duracao === null ? '—' : duracao+' dia(s)'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Diárias registradas</p><p class="text-sm font-bold">${diasEquipe} dia(s)</p><p class="text-[10px] text-slate-500">R$ ${totalDiarias.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} estimados</p></div></div><details class="mt-3"><summary class="cursor-pointer select-none text-sm font-bold text-blue-900">👥 Funcionários e diárias (${equipeObra.length})</summary><div class="mt-2 rounded-lg bg-slate-50 p-3">${listaEquipe}<p class="text-[10px] text-gray-500 mt-2">Valores estimados: dias únicos com ponto × diária atual do funcionário. Para histórico financeiro exato, seria necessário guardar o valor da diária no momento de cada ponto.</p></div></details></article>`;
+      }).join('');
+    }
+
     async function editarObra(id) {
       await garantirAdmin();
       const obra = obras.find(o => String(o.id) === String(id));
@@ -2430,11 +2589,29 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     }
 
     async function mudarStatusObraPatrao(id, novoStatus) {
-      await supabaseClient
-        .from('obras')
-        .update({ status: novoStatus, atualizado_por: 'Patrão' })
-        .eq('id', id);
-      carregarDadosDoSupabase();
+      try {
+        await garantirAdmin();
+        const obraAntes = obras.find(o => String(o.id) === String(id));
+        const atualizacao = { status: novoStatus, atualizado_por: 'Patrão' };
+        // Compatibilidade temporária caso o SQL de datas ainda não tenha sido aplicado.
+        if (novoStatus === 'Finalizada' && obraAntes && obraAntes.status !== 'Finalizada') {
+          atualizacao.finalizada_em = treHojeISO();
+        }
+        const { error } = await garantirSupabase().from('obras').update(atualizacao).eq('id', id);
+        if (error) {
+          // Se a coluna de datas não existe, tenta apenas o status para não bloquear o fluxo principal.
+          if (/finalizada_em|column/i.test(error.message || '')) {
+            const fallback = await garantirSupabase().from('obras').update({ status: novoStatus, atualizado_por: 'Patrão' }).eq('id', id);
+            if (fallback.error) throw fallback.error;
+            alert('Status atualizado, mas as datas ainda não estão habilitadas no banco. Execute o arquivo SQL de datas para ativá-las.');
+          } else throw error;
+        }
+        await carregarDadosDoSupabase();
+      } catch (e) {
+        console.error('Erro ao atualizar status da obra:', e);
+        alert('Não consegui atualizar o status da obra. Nada foi confirmado no aplicativo.\n\n' + (e?.message || 'Erro desconhecido.'));
+        await carregarDadosDoSupabase();
+      }
     }
 
 
@@ -2830,7 +3007,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const valorEl = document.getElementById('designar-valor');
       if (!tipoEl || !funcionarioEl || !valorEl || tipoEl.value !== 'Diária') return;
       const func = equipe.find(f => String(f.id) === String(funcionarioEl.value));
-      const diaria = Number(func?.diaria);
+      const diaria = Number(String(func?.diaria ?? '').replace(',', '.'));
       if (Number.isFinite(diaria) && diaria > 0) {
         // Só preenche o padrão; não sobrescreve um valor manual já informado.
         if (!valorEl.value || valorEl.dataset.valorAutomatico === 'true') {
@@ -2838,8 +3015,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
           valorEl.dataset.valorAutomatico = 'true';
         }
       } else if (valorEl.dataset.valorAutomatico === 'true') {
-        valorEl.value = '';
-        delete valorEl.dataset.valorAutomatico;
+        // Não apagar um valor já exibido quando a consulta de funcionário vier incompleta.
+        valorEl.dataset.valorAutomatico = 'false';
       }
     }
 
@@ -3157,44 +3334,50 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         });
 
         let totalBruto = 0;
-        let tipoDescricao = 'Diária (R$ ' + Number(f.diaria).toFixed(2) + ')';
+        const diariaAtual = Number(String(f.diaria ?? '0').replace(',', '.')) || 0;
+        let tipoDescricao = `Diária (R$ ${diariaAtual.toFixed(2)})`;
         let diasOuProducao = 0;
 
-        const desigEmpreita = desigsFunc.find(d => d.tipo_contratacao === 'Empreita Global' || d.tipo_contratacao === 'Metro Quadrado' || d.tipo_contratacao === 'Por Hora');
-
-        if (desigEmpreita) {
-          const obraObj = obras.find(o => o.id === desigEmpreita.obra_id);
-          const statusObra = obraObj ? obraObj.status : 'Em Andamento';
-          
-          tipoDescricao = desigEmpreita.tipo_contratacao;
-          diasOuProducao = desigEmpreita.quantidade || 1;
-
-          if (statusObra === 'Finalizada') {
-            totalBruto = Number(desigEmpreita.valor_total) || 0;
+        // Um funcionário pode ter diárias em algumas obras e empreita em outra.
+        // A regra antiga escolhia a primeira empreita e zerava as diárias do mês inteiro.
+        const tiposEmpreita = ['Empreita Global', 'Metro Quadrado', 'Por Hora'];
+        const desigsEmpreita = desigsFunc.filter(d => tiposEmpreita.includes(d.tipo_contratacao));
+        const obrasComEmpreita = new Set(desigsEmpreita.map(d => String(d.obra_id)));
+        let totalEmpreitasLiberadas = 0;
+        let empreitaPendente = false;
+        desigsEmpreita.forEach(d => {
+          const obraObj = obras.find(o => String(o.id) === String(d.obra_id));
+          if (obraObj && obraObj.status === 'Finalizada') {
+            totalEmpreitasLiberadas += Number(d.valor_total) || 0;
           } else {
-            tipoDescricao += ' (Aguardando Obra 100% Finalizada)';
-            totalBruto = 0;
+            empreitaPendente = true;
           }
-        } else {
-          const pontosFuncMes = pontos.filter(p => {
-            if (p.funcionario_id !== f.id) return false;
-            const partes = p.data.split('-');
-            if (partes.length === 3) {
-              return parseInt(partes[1]) - 1 === mes && parseInt(partes[0]) === ano;
-            }
-            return false;
-          });
-          diasOuProducao = pontosFuncMes.length;
-          totalBruto = diasOuProducao * (Number(f.diaria) || 0);
+        });
+
+        const diasUnicos = new Set();
+        pontos.forEach(p => {
+          if (String(p.funcionario_id) !== String(f.id)) return;
+          if (obrasComEmpreita.has(String(p.obra_id))) return; // não duplica ponto dentro de uma obra por empreita
+          const dataISO = treDataISO(p.data || p.created_at);
+          if (!dataISO) return;
+          const [anoP, mesP] = dataISO.split('-').map(Number);
+          if (mesP - 1 === mes && anoP === ano) diasUnicos.add(dataISO);
+        });
+        diasOuProducao = diasUnicos.size;
+        const totalDiarias = diasOuProducao * diariaAtual;
+        totalBruto = totalDiarias + totalEmpreitasLiberadas;
+        if (desigsEmpreita.length) {
+          const nomesTipos = [...new Set(desigsEmpreita.map(d => d.tipo_contratacao))].join(' + ');
+          tipoDescricao = diasOuProducao ? `Diárias + ${nomesTipos}` : nomesTipos;
+          if (empreitaPendente) tipoDescricao += ' (há empreita aguardando obra finalizada)';
         }
 
         const valesFuncMes = vales.filter(v => {
-          if (v.funcionario_id !== f.id) return false;
-          const partes = v.data.split('-');
-          if (partes.length === 3) {
-            return parseInt(partes[1]) - 1 === mes && parseInt(partes[0]) === ano;
-          }
-          return false;
+          if (String(v.funcionario_id) !== String(f.id)) return false;
+          const dataISO = treDataISO(v.data || v.created_at);
+          if (!dataISO) return false;
+          const [anoVale, mesVale] = dataISO.split('-').map(Number);
+          return mesVale - 1 === mes && anoVale === ano;
         });
 
         let totalVales = 0;
@@ -3320,6 +3503,11 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (event.key === 'Escape') fecharComprovanteVale();
     });
 
+  </script>
+<script>
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') fecharModalDetalhesObra();
+    });
   </script>
 </body>
 </html>
