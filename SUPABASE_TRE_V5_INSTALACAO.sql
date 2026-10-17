@@ -41,6 +41,8 @@ create table if not exists public.obras (
 );
 alter table public.obras add column if not exists nome text;
 alter table public.obras add column if not exists local text;
+alter table public.obras add column if not exists componente text;
+alter table public.obras add column if not exists representante text;
 alter table public.obras add column if not exists status text default 'Em Andamento';
 alter table public.obras add column if not exists atualizado_por text;
 alter table public.obras add column if not exists created_at timestamptz not null default now();
