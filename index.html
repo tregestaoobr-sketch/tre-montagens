@@ -1943,14 +1943,20 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (!select || !box) return;
       const obra = obras.find(o => String(o.id) === String(select.value));
       if (!obra) { box.classList.add('hidden'); box.innerHTML = ''; return; }
-      const linha = (rotulo, valor) => valor ? `<p><strong>${rotulo}:</strong> ${escaparTextoObra(valor).replace(/\n/g, '<br>')}</p>` : '';
+
+      // Aceita os nomes de coluna usados por versões diferentes do banco.
+      const complemento = obra.componente ?? obra.complemento ?? obra.andar_complemento ?? obra.andar;
+      const representante = obra.representante ?? obra.engenheiro ?? obra.mestre;
+      const observacoes = obra.observacoes ?? obra.observacao ?? obra.observacoes_obra ?? obra.instrucoes;
+      const numero = obra.numero ?? obra.numero_obra;
+      const linha = (rotulo, valor) => `<p><strong>${rotulo}:</strong> ${valor !== null && valor !== undefined && String(valor).trim() !== '' ? escaparTextoObra(valor).replace(/\n/g, '<br>') : '<span class="text-gray-500">Não informado</span>'}</p>`;
       box.innerHTML = `<h4 class="font-bold text-emerald-900 text-base">🏗️ ${escaparTextoObra(obra.nome || 'Obra')}</h4>
+        ${linha('Número da obra', numero || obra.nome)}
         ${linha('Status', obra.status || 'Em Andamento')}
-        ${linha('Endereço / Localização', obra.local)}
-        ${linha('Complemento / Andar', obra.componente)}
-        ${linha('Engenheiro / Representante', obra.representante)}
-        ${linha('Observações / Instruções', obra.observacoes || obra.observacao)}
-        ${!(obra.local || obra.componente || obra.representante || obra.observacoes || obra.observacao) ? '<p>Não há outras informações cadastradas para esta obra.</p>' : ''}`;
+        ${linha('Endereço / Localização', obra.local ?? obra.endereco ?? obra.localizacao)}
+        ${linha('Complemento / Andar', complemento)}
+        ${linha('Engenheiro / Representante', representante)}
+        ${linha('Observações / Instruções', observacoes)}`;
       box.classList.remove('hidden');
     }
 
