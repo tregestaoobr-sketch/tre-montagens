@@ -704,6 +704,14 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       </button>
 
       <button
+        id="tab-btn-pendencias"
+        onclick="mudarAbaAdmin('pendencias')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>🚦</span> Pendências
+      </button>
+
+      <button
         id="tab-btn-cronograma"
         onclick="mudarAbaAdmin('cronograma')"
         class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
@@ -754,6 +762,39 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 
 
     <div class="p-4 max-w-5xl mx-auto w-full flex-grow">
+
+      <!-- =====================================================
+           ABA PAINEL DE PENDÊNCIAS (USA OS REGISTROS EXISTENTES)
+           ===================================================== -->
+      <div id="aba-pendencias" class="aba-content hidden space-y-6">
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <h3 class="text-xl font-extrabold text-blue-950">🚦 Central de Controle — Pendências e Diário de Obra</h3>
+              <p class="text-sm text-gray-600 mt-1">Reúne os registros e as fotos que os funcionários já enviam. Não cria registros duplicados nem altera o fluxo atual.</p>
+            </div>
+            <button onclick="renderizarPainelPendencias()" class="bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm px-4 py-2 rounded-xl">↻ Atualizar painel</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4"><p class="text-xs font-bold uppercase text-amber-800">Obras em andamento</p><p id="painel-qtd-andamento" class="text-3xl font-extrabold text-amber-900 mt-1">0</p></div>
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4"><p class="text-xs font-bold uppercase text-red-800">Registros sinalizados</p><p id="painel-qtd-pendencias" class="text-3xl font-extrabold text-red-900 mt-1">0</p><p class="text-[11px] text-red-700 mt-1">Tipo “Observação / Problema / Ajuste”</p></div>
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4"><p class="text-xs font-bold uppercase text-emerald-800">Fotos e vídeos registrados</p><p id="painel-qtd-midias" class="text-3xl font-extrabold text-emerald-900 mt-1">0</p></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input id="painel-busca" oninput="renderizarListaPainelPendencias()" type="search" placeholder="Buscar obra, funcionário ou observação..." class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <select id="painel-filtro" onchange="renderizarListaPainelPendencias()" class="w-full p-3 border rounded-xl bg-gray-50">
+              <option value="todos">Todos os registros</option>
+              <option value="pendencias">Somente observações / problemas</option>
+              <option value="andamento">Somente andamento diário</option>
+              <option value="finalizacao">Somente finalizações</option>
+            </select>
+          </div>
+          <div class="flex items-start gap-2 rounded-xl bg-blue-50 border border-blue-100 p-3 text-xs text-blue-900">
+            <span class="text-lg">ℹ️</span><p>Este painel identifica registros marcados pelo funcionário como “Observação / Problema / Ajuste”. Ele não presume que uma observação já foi resolvida. A confirmação de resolução poderá ser adicionada depois com armazenamento compartilhado no banco.</p>
+          </div>
+          <div id="painel-lista-registros" class="space-y-3"></div>
+        </div>
+      </div>
 
       <!-- =====================================================
            ABA OBRAS
@@ -1666,6 +1707,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       populardropdowns();
       carregarHistoricoPontosFuncionario();
       renderizarObras();
+      renderizarPainelPendencias();
       renderizarCronograma();
       renderizarEquipe();
       renderizarDesignacoes();
@@ -2103,7 +2145,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const abaElement = document.getElementById(`aba-${aba}`);
       if (abaElement) abaElement.classList.remove('hidden');
 
-      const abas = ['obras', 'cronograma', 'equipe', 'designar', 'presencas', 'comprovantes', 'fechamento'];
+      const abas = ['obras', 'pendencias', 'cronograma', 'equipe', 'designar', 'presencas', 'comprovantes', 'fechamento'];
       abas.forEach(a => {
         const btn = document.getElementById(`tab-btn-${a}`);
         if (!btn) return;
@@ -2113,6 +2155,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       });
 
       if (aba === 'obras') renderizarObras();
+      if (aba === 'pendencias') renderizarPainelPendencias();
       if (aba === 'cronograma') renderizarCronograma();
       if (aba === 'equipe') renderizarEquipe();
       if (aba === 'designar') renderizarDesignacoes();
@@ -2520,6 +2563,72 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 
     function fecharModalDetalhesObra() {
       document.getElementById('modal-detalhes-obra')?.classList.add('hidden');
+    }
+
+    function treEscaparPainel(valor) {
+      return String(valor ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function treTipoRegistroPainel(foto) {
+      const tipo = String(foto?.tipo || '').toLowerCase();
+      if (tipo.includes('observa') || tipo.includes('problema') || tipo.includes('ajuste') || tipo.includes('pend')) return 'pendencias';
+      if (tipo.includes('finaliza') || tipo.includes('conclus')) return 'finalizacao';
+      return 'andamento';
+    }
+
+    function renderizarPainelPendencias() {
+      const andamento = obras.filter(o => (o.status || 'Em Andamento') === 'Em Andamento').length;
+      const pendencias = fotosObra.filter(f => treTipoRegistroPainel(f) === 'pendencias').length;
+      const qAndamento = document.getElementById('painel-qtd-andamento');
+      const qPendencias = document.getElementById('painel-qtd-pendencias');
+      const qMidias = document.getElementById('painel-qtd-midias');
+      if (qAndamento) qAndamento.textContent = andamento;
+      if (qPendencias) qPendencias.textContent = pendencias;
+      if (qMidias) qMidias.textContent = fotosObra.length;
+      renderizarListaPainelPendencias();
+    }
+
+    function renderizarListaPainelPendencias() {
+      const container = document.getElementById('painel-lista-registros');
+      if (!container) return;
+      const busca = String(document.getElementById('painel-busca')?.value || '').trim().toLocaleLowerCase('pt-BR');
+      const filtro = document.getElementById('painel-filtro')?.value || 'todos';
+      const registros = [...fotosObra].filter(f => {
+        const tipo = treTipoRegistroPainel(f);
+        if (filtro !== 'todos' && filtro !== tipo) return false;
+        const obra = obras.find(o => String(o.id) === String(f.obra_id));
+        const func = equipe.find(e => String(e.id) === String(f.funcionario_id));
+        const haystack = [obra?.nome, obra?.local, func?.nome, f.observacao, f.tipo, f.data, f.file_name].join(' ').toLocaleLowerCase('pt-BR');
+        return !busca || haystack.includes(busca);
+      }).sort((a,b) => String(b.created_at || b.data || '').localeCompare(String(a.created_at || a.data || '')));
+
+      if (!registros.length) {
+        container.innerHTML = '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center"><p class="text-2xl">📭</p><p class="font-bold text-slate-700 mt-2">Nenhum registro encontrado</p><p class="text-sm text-slate-500 mt-1">Quando a equipe enviar fotos ou vídeos pelo Diário de Obra, eles aparecerão aqui.</p></div>';
+        return;
+      }
+
+      container.innerHTML = registros.map(f => {
+        const obra = obras.find(o => String(o.id) === String(f.obra_id));
+        const func = equipe.find(e => String(e.id) === String(f.funcionario_id));
+        const tipo = treTipoRegistroPainel(f);
+        const ehPendencia = tipo === 'pendencias';
+        const badge = ehPendencia ? 'bg-red-100 text-red-800 border-red-200' : tipo === 'finalizacao' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-blue-100 text-blue-800 border-blue-200';
+        const titulo = ehPendencia ? '⚠️ Observação / Problema / Ajuste' : tipo === 'finalizacao' ? '🏁 Finalização / Conclusão' : '🔨 Andamento diário';
+        const miniatura = f.is_video
+          ? `<div class="h-24 w-24 shrink-0 rounded-lg bg-slate-900 text-white flex items-center justify-center text-2xl">▶️</div>`
+          : (f.imagem ? `<img src="${f.imagem}" alt="Foto da obra" loading="lazy" class="h-24 w-24 shrink-0 rounded-lg object-cover border border-slate-200">` : `<div class="h-24 w-24 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">📷</div>`);
+        return `<article class="rounded-xl border ${ehPendencia ? 'border-red-200 bg-red-50/50' : 'border-slate-200 bg-white'} p-3 flex flex-col sm:flex-row gap-3">
+          ${miniatura}
+          <div class="min-w-0 flex-1 space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-extrabold px-2 py-1 rounded-full border ${badge}">${titulo}</span><span class="text-xs text-slate-500">${treEscaparPainel(f.data || 'Data não informada')}</span></div>
+            <h4 class="font-extrabold text-blue-950">${treEscaparPainel(obra?.nome || 'Obra não encontrada')}</h4>
+            <p class="text-xs text-slate-500">📍 ${treEscaparPainel(obra?.local || 'Endereço não informado')} · 👷 ${treEscaparPainel(func?.nome || 'Ex-colaborador')}</p>
+            <p class="text-sm text-slate-700 whitespace-pre-wrap">${treEscaparPainel(f.observacao || 'Nenhum comentário registrado.')}</p>
+            <p class="text-[11px] text-slate-500">Arquivo: ${treEscaparPainel(f.file_name || (f.is_video ? 'Vídeo' : 'Foto'))}</p>
+            <div class="flex flex-wrap gap-2 pt-1"><button onclick="abrirGaleriaObra('${String(f.obra_id).replace(/'/g, "\\'")}')" class="rounded-lg bg-blue-950 hover:bg-blue-900 text-white text-xs font-bold px-3 py-2">Abrir galeria da obra</button>${f.imagem ? `<a href="${f.imagem}" target="_blank" rel="noopener" class="rounded-lg bg-white border border-slate-300 text-slate-700 text-xs font-bold px-3 py-2">Ver arquivo</a>` : ''}</div>
+          </div>
+        </article>`;
+      }).join('');
     }
 
     function renderizarObras() {
