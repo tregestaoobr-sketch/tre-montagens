@@ -351,6 +351,19 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     </div>
 
 
+    <!-- CONSULTA SOMENTE LEITURA: INFORMAÇÕES DA OBRA -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-emerald-600">
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2">📋 Consultar informações da obra</h3>
+      <p class="text-sm text-gray-600">Consulte endereço, complemento, representante e observações, mesmo quando a obra não estiver designada para você. Esta área é somente para consulta.</p>
+      <div>
+        <label for="consulta-info-obra" class="block text-sm font-semibold mb-1 text-gray-700">Selecione a obra:</label>
+        <select id="consulta-info-obra" onchange="mostrarInformacoesObraFuncionario()" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+          <option value="">Selecione a Obra...</option>
+        </select>
+      </div>
+      <div id="consulta-info-obra-detalhes" class="hidden rounded-xl border border-emerald-100 bg-emerald-50 p-4 space-y-2 text-sm text-gray-700"></div>
+    </div>
+
     <!-- CARD 1.5: STATUS DA OBRA -->
     <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-amber-600">
 
@@ -756,6 +769,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             <input type="text" id="obra-componente" placeholder="Complemento (ex.: Torre Aroeira / Garagem / Dock)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
             <input type="text" id="obra-representante" placeholder="Representante (ex: Mestre / Engenheiro)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
             <input type="text" id="obra-local" placeholder="Localização / Endereço" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <textarea id="obra-observacoes" rows="3" placeholder="Observações / instruções da obra (visível para o funcionário)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none md:col-span-2"></textarea>
           </div>
           <button
             onclick="cadastrarObra()"
@@ -1877,6 +1891,21 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         });
       });
 
+      const consultaInfo = document.getElementById('consulta-info-obra');
+      if (consultaInfo) {
+        const valorAnterior = consultaInfo.value;
+        consultaInfo.innerHTML = '<option value="">Selecione a Obra...</option>';
+        // A consulta mostra obras não finalizadas, sem alterar a lista/permissão do ponto.
+        obras.filter(o => (o.status || 'Em Andamento') !== 'Finalizada').forEach(o => {
+          const option = document.createElement('option');
+          option.value = o.id;
+          option.textContent = `${o.nome || 'Obra sem nome'}${o.local ? ' — ' + o.local : ''}`;
+          consultaInfo.appendChild(option);
+        });
+        if ([...consultaInfo.options].some(op => op.value === valorAnterior)) consultaInfo.value = valorAnterior;
+        mostrarInformacoesObraFuncionario();
+      }
+
       const obraSelects = [
         'ponto-obra',
         'consulta-pdf-obra',
@@ -1903,6 +1932,27 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       });
     }
 
+
+    function escaparTextoObra(valor) {
+      return String(valor ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function mostrarInformacoesObraFuncionario() {
+      const select = document.getElementById('consulta-info-obra');
+      const box = document.getElementById('consulta-info-obra-detalhes');
+      if (!select || !box) return;
+      const obra = obras.find(o => String(o.id) === String(select.value));
+      if (!obra) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+      const linha = (rotulo, valor) => valor ? `<p><strong>${rotulo}:</strong> ${escaparTextoObra(valor).replace(/\n/g, '<br>')}</p>` : '';
+      box.innerHTML = `<h4 class="font-bold text-emerald-900 text-base">🏗️ ${escaparTextoObra(obra.nome || 'Obra')}</h4>
+        ${linha('Status', obra.status || 'Em Andamento')}
+        ${linha('Endereço / Localização', obra.local)}
+        ${linha('Complemento / Andar', obra.componente)}
+        ${linha('Engenheiro / Representante', obra.representante)}
+        ${linha('Observações / Instruções', obra.observacoes || obra.observacao)}
+        ${!(obra.local || obra.componente || obra.representante || obra.observacoes || obra.observacao) ? '<p>Não há outras informações cadastradas para esta obra.</p>' : ''}`;
+      box.classList.remove('hidden');
+    }
 
     /* =========================================================
        ATUALIZAR STATUS DA OBRA
@@ -2345,6 +2395,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const local = document.getElementById('obra-local').value.trim();
       const componente = document.getElementById('obra-componente').value.trim();
       const representante = document.getElementById('obra-representante').value.trim();
+      const observacoes = document.getElementById('obra-observacoes').value.trim();
 
       if (!nome || !local) {
         alert("Preencha o nome/número e o local da obra!");
@@ -2357,6 +2408,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         local: local,
         componente: componente,
         representante: representante,
+        observacoes: observacoes,
         status: 'Em Andamento',
         inicio_em: (() => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); })(),
         atualizado_por: 'Patrão'
@@ -2372,6 +2424,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       document.getElementById('obra-local').value = '';
       document.getElementById('obra-componente').value = '';
       document.getElementById('obra-representante').value = '';
+      document.getElementById('obra-observacoes').value = '';
       carregarDadosDoSupabase();
     }
 
@@ -2621,10 +2674,12 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (componente === null) return;
       const representante = prompt('Representante (ex.: mestre / engenheiro):', obra.representante || '');
       if (representante === null) return;
+      const observacoes = prompt('Observações / instruções da obra (visíveis ao funcionário):', obra.observacoes || obra.observacao || '');
+      if (observacoes === null) return;
       if (!nome.trim() || !local.trim()) { alert('Nome/número e localização são obrigatórios.'); return; }
       const { error } = await supabaseClient.from('obras').update({
         nome: nome.trim(), local: local.trim(), componente: componente.trim(),
-        representante: representante.trim(), atualizado_por: 'Patrão'
+        representante: representante.trim(), observacoes: observacoes.trim(), atualizado_por: 'Patrão'
       }).eq('id', id);
       if (error) { alert('Erro ao editar obra: ' + error.message + '\n\nConfira se executou o SQL de atualização incluído no ZIP.'); return; }
       await carregarDadosDoSupabase();
