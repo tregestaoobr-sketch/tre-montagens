@@ -1,4 +1,4 @@
-const CACHE = 'tre-montagens-v6-0-notificacoes';
+const CACHE = 'tre-montagens-v5-0-estavel';
 const CORE = ['./','./index.html','./manifest.json','./logo-tre.jpg'];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
