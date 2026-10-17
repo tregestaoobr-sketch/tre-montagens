@@ -651,19 +651,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     </div>
 
 
-    <!-- HISTÓRICO -->
-    <div class="mt-8 card-acustico-blur p-6 rounded-2xl shadow-xl border-l-4 border-orange-500">
-      <h3 class="font-bold text-blue-950 mb-3 flex items-center justify-between">
-        <span>Seus Pontos Registrados Recentes:</span>
-        <span class="text-xs text-gray-500 font-normal">Últimos 5 registros</span>
-      </h3>
-      <div
-        id="lista-ponto-recentes"
-        class="space-y-2 text-sm text-gray-700 divide-y divide-gray-100"
-      >
-        Carregando...
-      </div>
-    </div>
 
   </div>
 
@@ -758,7 +745,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input type="text" id="obra-nome" placeholder="Número / Nome da Obra (ex: Obra 123 - Avanço RJ)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
-            <input type="text" id="obra-componente" placeholder="Componente (ex: Torre de... / Garagem / Dock)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <input type="text" id="obra-componente" placeholder="Complemento (ex.: Torre Aroeira / Garagem / Dock)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
             <input type="text" id="obra-representante" placeholder="Representante (ex: Mestre / Engenheiro)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
             <input type="text" id="obra-local" placeholder="Localização / Endereço" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
           </div>
@@ -1065,6 +1052,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             </label>
             <select
               id="designar-funcionario"
+              onchange="preencherValorDiariaPadrao()"
               class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
             ></select>
           </div>
@@ -1086,7 +1074,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
               </label>
               <select
                 id="designar-tipo"
-                onchange="alternarCamposDesignacao()"
+                onchange="alternarCamposDesignacao(); preencherValorDiariaPadrao()"
                 class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
               >
                 <option value="Diária">Diária (Valor fixo por dia)</option>
@@ -1852,7 +1840,13 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         const el = document.getElementById(id);
         if (!el) return;
         el.innerHTML = '<option value="">Selecione a Obra...</option>';
-        obras.forEach(o => {
+        // Funcionário só pode selecionar obras em andamento ou prontas.
+        // As abas administrativas continuam podendo consultar todas as obras.
+        const idsFuncionario = ['ponto-obra', 'vale-obra', 'foto-obra'];
+        const obrasDisponiveis = idsFuncionario.includes(id)
+          ? obras.filter(o => (o.status || 'Em Andamento') !== 'Finalizada')
+          : obras;
+        obrasDisponiveis.forEach(o => {
           const statusTxt = o.status ? ` [${o.status}]` : '';
           el.innerHTML += `<option value="${o.id}">${o.nome} (${o.local})${statusTxt}</option>`;
         });
@@ -2388,7 +2382,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
                 </span>
               </div>
               <p class="text-xs text-gray-500 mt-0.5">📍 ${o.local} | Atualizado por: ${o.atualizado_por || 'Geral'}</p>
-              ${o.componente ? `<p class="text-xs text-gray-600 mt-1">🧩 Componente: ${o.componente}</p>` : ''}
+              ${o.componente ? `<p class="text-xs text-gray-600 mt-1">🧩 Complemento: ${o.componente}</p>` : ''}
               ${o.representante ? `<p class="text-xs text-gray-600">👷 Representante: ${o.representante}</p>` : ''}
               <div class="flex gap-2 mt-1.5">
                 <span class="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full">${qtdPdfs} PDF(s)</span>
@@ -2422,7 +2416,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       if (nome === null) return;
       const local = prompt('Localização / endereço:', obra.local || '');
       if (local === null) return;
-      const componente = prompt('Componente (ex.: torre, garagem, dock):', obra.componente || '');
+      const componente = prompt('Complemento (ex.: torre, garagem, dock):', obra.componente || '');
       if (componente === null) return;
       const representante = prompt('Representante (ex.: mestre / engenheiro):', obra.representante || '');
       if (representante === null) return;
@@ -2830,6 +2824,25 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
        ALTERNAR CAMPOS DE DESIGNAÇÃO
        ========================================================= */
 
+    function preencherValorDiariaPadrao() {
+      const tipoEl = document.getElementById('designar-tipo');
+      const funcionarioEl = document.getElementById('designar-funcionario');
+      const valorEl = document.getElementById('designar-valor');
+      if (!tipoEl || !funcionarioEl || !valorEl || tipoEl.value !== 'Diária') return;
+      const func = equipe.find(f => String(f.id) === String(funcionarioEl.value));
+      const diaria = Number(func?.diaria);
+      if (Number.isFinite(diaria) && diaria > 0) {
+        // Só preenche o padrão; não sobrescreve um valor manual já informado.
+        if (!valorEl.value || valorEl.dataset.valorAutomatico === 'true') {
+          valorEl.value = diaria.toFixed(2);
+          valorEl.dataset.valorAutomatico = 'true';
+        }
+      } else if (valorEl.dataset.valorAutomatico === 'true') {
+        valorEl.value = '';
+        delete valorEl.dataset.valorAutomatico;
+      }
+    }
+
     function alternarCamposDesignacao() {
       const tipo = document.getElementById('designar-tipo').value;
       const blocoMetragem = document.getElementById('bloco-metragem');
@@ -2854,6 +2867,16 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
     /* =========================================================
        DESIGNAR OBRA
        ========================================================= */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const campoValorDiaria = document.getElementById('designar-valor');
+      if (campoValorDiaria) {
+        campoValorDiaria.addEventListener('input', () => {
+          campoValorDiaria.dataset.valorAutomatico = 'false';
+        });
+      }
+      preencherValorDiariaPadrao();
+    });
 
     async function confirmarEEnviarDesignacao() {
       const btn = document.getElementById('btn-designar');
@@ -2921,6 +2944,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         alert("✅ Convocação registrada e WhatsApp aberto com sucesso!");
 
         document.getElementById('designar-valor').value = '';
+        delete document.getElementById('designar-valor').dataset.valorAutomatico;
+        preencherValorDiariaPadrao();
         document.getElementById('designar-quantidade').value = '';
         document.getElementById('designar-instrucao').value = '';
         carregarDadosDoSupabase();

@@ -48,3 +48,6 @@ TESTE FINAL RECOMENDADO
 FONTE OFICIAL DOS DADOS
 Os registros oficiais ficam no Supabase. O navegador não usa localStorage
 para guardar funcionários, obras, pontos ou designações.
+
+
+V5.2 — correções pontuais: removido o histórico de pontos recentes da área do funcionário; obras finalizadas não aparecem nos seletores de ponto/vale/fotos do funcionário; rótulo corrigido para Complemento; diária base do colaborador é sugerida automaticamente ao designar obra do tipo Diária. A coluna existente no banco continua chamada componente para evitar migração e preservar compatibilidade.
