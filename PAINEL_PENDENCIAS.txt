@@ -1,0 +1,15 @@
+T.R.E. MONTAGENS — PAINEL DE PENDÊNCIAS
+
+O que foi adicionado no index.html:
+- Nova aba "Pendências" na área do patrão.
+- Contagem de obras em andamento, registros do tipo Observação/Problema/Ajuste e mídias existentes.
+- Busca por obra, funcionário, observação e nome de arquivo.
+- Filtros por observação/problema, andamento diário e finalização.
+- Prévia da foto, comentário do funcionário, data, obra e autor do registro.
+- Atalho para abrir a galeria existente da obra.
+
+Compatibilidade:
+- Usa a tabela existente fotos_obra e as tabelas existentes obras/equipe.
+- Não cria tabelas, não exige SQL e não modifica o processo de envio de fotos.
+- Não marca automaticamente uma ocorrência como resolvida, porque o banco atual não possui um estado compartilhado de resolução. A tela informa isso explicitamente para não apresentar uma pendência como concluída sem confirmação.
+- O painel atualiza quando os dados do Supabase são carregados e também possui botão de atualização manual.

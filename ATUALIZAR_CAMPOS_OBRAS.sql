@@ -1,5 +1,3 @@
--- T.R.E. Montagens: adicionar campos da obra sem apagar dados existentes
-ALTER TABLE public.obras
-  ADD COLUMN IF NOT EXISTS componente text,
-  ADD COLUMN IF NOT EXISTS representante text,
-  ADD COLUMN IF NOT EXISTS observacoes text;
+-- T.R.E. Montagens: adicionar campos novos sem apagar dados existentes
+alter table public.obras add column if not exists componente text;
+alter table public.obras add column if not exists representante text;
