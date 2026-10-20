@@ -1714,6 +1714,13 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       carregarPresencas();
       carregarValesAdmin();
 
+      // Mantém o fechamento mensal sincronizado com os dados recém-lidos do Supabase.
+      // Evita que a aba continue mostrando totais antigos/zerados após atualizar registros.
+      const abaFechamento = document.getElementById('aba-fechamento');
+      if (abaFechamento && !abaFechamento.classList.contains('hidden')) {
+        calcularFechamentoMensal();
+      }
+
       if (falhas.length) {
         console.error('Algumas tabelas não puderam ser carregadas:', falhas);
         // Do not wipe successful data. Keep the UI usable and make the exact failing table visible in the console.
@@ -1991,11 +1998,28 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const representante = obra.representante ?? obra.engenheiro ?? obra.mestre;
       const observacoes = obra.observacoes ?? obra.observacao ?? obra.observacoes_obra ?? obra.instrucoes;
       const numero = obra.numero ?? obra.numero_obra;
+      const endereco = obra.local ?? obra.endereco ?? obra.localizacao;
       const linha = (rotulo, valor) => `<p><strong>${rotulo}:</strong> ${valor !== null && valor !== undefined && String(valor).trim() !== '' ? escaparTextoObra(valor).replace(/\n/g, '<br>') : '<span class="text-gray-500">Não informado</span>'}</p>`;
+      const enderecoTexto = endereco !== null && endereco !== undefined ? String(endereco).trim() : '';
+      // O patrão pode digitar um endereço normal OU colar um link compartilhado do Google Maps.
+      // Se já for um link do Maps, abrimos esse link diretamente; caso contrário, pesquisamos o endereço.
+      const ehLinkGoogleMaps = /^(https?:\/\/)?(www\.)?(google\.[^/]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(enderecoTexto);
+      const urlMaps = enderecoTexto
+        ? (ehLinkGoogleMaps
+            ? ( /^https?:\/\//i.test(enderecoTexto) ? enderecoTexto : `https://${enderecoTexto}` )
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoTexto)}`)
+        : '';
+      const linkMaps = enderecoTexto
+        ? `<a href="${escaparTextoObra(urlMaps)}" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 mt-2 px-4 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-md transition"><span aria-hidden="true">📍</span> ABRIR ROTA NO GOOGLE MAPS <span aria-hidden="true">↗</span></a>`
+        : '';
+      const enderecoLinha = enderecoTexto
+        ? `<p><strong>Endereço / Localização:</strong> <a class="text-blue-700 underline font-semibold break-words" href="${escaparTextoObra(urlMaps)}" target="_blank" rel="noopener noreferrer">${escaparTextoObra(enderecoTexto)}</a></p>`
+        : linha('Endereço / Localização', endereco);
       box.innerHTML = `<h4 class="font-bold text-emerald-900 text-base">🏗️ ${escaparTextoObra(obra.nome || 'Obra')}</h4>
         ${linha('Número da obra', numero || obra.nome)}
         ${linha('Status', obra.status || 'Em Andamento')}
-        ${linha('Endereço / Localização', obra.local ?? obra.endereco ?? obra.localizacao)}
+        ${enderecoLinha}
+        ${linkMaps}
         ${linha('Complemento / Andar', complemento)}
         ${linha('Engenheiro / Representante', representante)}
         ${linha('Observações / Instruções', observacoes)}`;
