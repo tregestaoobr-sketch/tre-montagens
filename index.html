@@ -2774,7 +2774,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       });
       return [...mapa.entries()].map(([fid, dias]) => {
         const f = equipe.find(x => String(x.id) === fid);
-        return { nome: f?.nome || 'Funcionário removido', dias: dias.size, diaria: Number(String(f?.diaria ?? '0').replace(',', '.')) || 0, total: dias.size * (Number(String(f?.diaria ?? '0').replace(',', '.')) || 0) };
+        return { nome: f?.nome || 'Funcionário removido', dias: dias.size, diaria: treNumeroMonetario(f?.diaria), total: dias.size * treNumeroMonetario(f?.diaria) };
       }).sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
     }
 
@@ -3145,7 +3145,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const editId = document.getElementById('edit-func-id').value.trim();
       const nome = document.getElementById('func-nome').value.trim();
       const whatsapp = document.getElementById('func-whatsapp').value.trim();
-      const diaria = parseFloat(document.getElementById('func-diaria').value);
+      const diaria = treNumeroMonetario(document.getElementById('func-diaria').value);
       const pin = document.getElementById('func-pin').value.trim();
       if (!nome) return alert('Informe o nome completo do funcionário.');
       if (!Number.isFinite(diaria) || diaria <= 0) return alert('Informe uma diária válida maior que zero.');
@@ -3205,6 +3205,19 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
        EQUIPE
        ========================================================= */
 
+    // Converte valores monetários com segurança, aceitando tanto 1250.50
+    // quanto formatos brasileiros como "1.250,50" ou "R$ 1.250,50".
+    function treNumeroMonetario(valor) {
+      if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+      if (valor === null || valor === undefined || String(valor).trim() === '') return 0;
+      let texto = String(valor).trim().replace(/R\$\s?/gi, '').replace(/\s/g, '');
+      if (texto.includes(',')) {
+        texto = texto.replace(/\./g, '').replace(',', '.');
+      }
+      const numero = Number(texto);
+      return Number.isFinite(numero) ? numero : 0;
+    }
+
     function renderizarEquipe() {
       const lista = document.getElementById('lista-equipe');
       if (!lista) return;
@@ -3219,7 +3232,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         <li class="py-3 flex justify-between items-center gap-2">
           <div>
             <p class="font-bold text-blue-950">${f.nome}</p>
-            <p class="text-xs text-gray-500">📱 ${f.whatsapp || 'Sem Whats'} | Diária: R$ ${Number(f.diaria).toFixed(2)} | PIN: ****</p>
+            <p class="text-xs text-gray-500">📱 ${f.whatsapp || 'Sem Whats'} | Diária: R$ ${treNumeroMonetario(f.diaria).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} | PIN: ****</p>
           </div>
           <div class="flex items-center gap-1.5">
             <button onclick="prepararEdicaoFuncionario('${f.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">✏️ Editar</button>
@@ -3259,7 +3272,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       const valorEl = document.getElementById('designar-valor');
       if (!tipoEl || !funcionarioEl || !valorEl || tipoEl.value !== 'Diária') return;
       const func = equipe.find(f => String(f.id) === String(funcionarioEl.value));
-      const diaria = Number(String(func?.diaria ?? '').replace(',', '.'));
+      const diaria = treNumeroMonetario(func?.diaria);
       if (Number.isFinite(diaria) && diaria > 0) {
         // Só preenche o padrão; não sobrescreve um valor manual já informado.
         if (!valorEl.value || valorEl.dataset.valorAutomatico === 'true') {
@@ -3586,7 +3599,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         });
 
         let totalBruto = 0;
-        const diariaAtual = Number(String(f.diaria ?? '0').replace(',', '.')) || 0;
+        const diariaAtual = treNumeroMonetario(f.diaria);
         let tipoDescricao = `Diária (R$ ${diariaAtual.toFixed(2)})`;
         let diasOuProducao = 0;
 
