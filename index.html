@@ -2612,6 +2612,22 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       renderizarListaPainelPendencias();
     }
 
+    async function excluirRegistroPainel(registroId) {
+      if (!registroId) return alert('Não encontrei o registro selecionado.');
+      if (!confirm('Deseja excluir este registro e sua foto/vídeo do diário de obra?')) return;
+      try {
+        await garantirAdmin();
+        const { error } = await garantirSupabase().from('fotos_obra').delete().eq('id', registroId);
+        if (error) throw error;
+        await carregarDadosDoSupabase();
+        renderizarPainelPendencias();
+        alert('Registro excluído com sucesso.');
+      } catch (e) {
+        console.error('Erro ao excluir registro:', e);
+        alert('Não foi possível excluir o registro.\n\n' + (e?.message || 'Erro desconhecido.'));
+      }
+    }
+
     function renderizarListaPainelPendencias() {
       const container = document.getElementById('painel-lista-registros');
       if (!container) return;
@@ -2649,7 +2665,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
             <p class="text-xs text-slate-500">📍 ${treEscaparPainel(obra?.local || 'Endereço não informado')} · 👷 ${treEscaparPainel(func?.nome || 'Ex-colaborador')}</p>
             <p class="text-sm text-slate-700 whitespace-pre-wrap">${treEscaparPainel(f.observacao || 'Nenhum comentário registrado.')}</p>
             <p class="text-[11px] text-slate-500">Arquivo: ${treEscaparPainel(f.file_name || (f.is_video ? 'Vídeo' : 'Foto'))}</p>
-            <div class="flex flex-wrap gap-3 pt-2">${f.imagem ? `<a href="${f.imagem}" download="obra-foto-${f.id}.${f.is_video ? 'mp4' : 'jpg'}" class="inline-flex items-center rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-2">💾 Salvar Foto</a><button onclick="excluirFotoObra('${f.id}', '${f.obra_id}', 'pendencias')" class="inline-flex items-center rounded-lg text-red-600 text-xs font-bold px-3 py-2">Excluir</button>` : ''}</div>
+            <div class="flex flex-wrap gap-2 pt-1">${f.imagem ? `<a href="${f.imagem}" download="${treEscaparPainel(f.file_name || 'foto-obra')}" class="inline-flex rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold px-3 py-2">💾 Salvar Foto</a>` : ''}<button onclick="excluirRegistroPainel('${String(f.id).replace(/'/g, "\\'")}')" class="rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold px-3 py-2">Excluir</button></div>
           </div>
         </article>`;
       }).join('');
@@ -3056,21 +3072,12 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
       }
     }
 
-    async function excluirFotoObra(fotoId, obraId, origem = 'galeria') {
+    async function excluirFotoObra(fotoId, obraId) {
       await garantirAdmin();
       if (confirm("Deseja excluir este arquivo?")) {
-        const { error } = await supabaseClient.from('fotos_obra').delete().eq('id', fotoId);
-        if (error) {
-          console.error(error);
-          alert("Não foi possível excluir o arquivo. Tente novamente.");
-          return;
-        }
+        await supabaseClient.from('fotos_obra').delete().eq('id', fotoId);
         await carregarDadosDoSupabase();
-        if (origem === 'pendencias') {
-          renderizarPainelPendencias();
-        } else {
-          abrirGaleriaObra(obraId);
-        }
+        abrirGaleriaObra(obraId);
       }
     }
 
