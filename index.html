@@ -3366,16 +3366,24 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         const { error } = await supabaseClient.from('designacoes').insert([novaDesignacao]);
         if (error) throw error;
 
+        const linkTRE = 'https://tregestaoobr-sketch.github.io/tre-montagens/';
         let texto = `Olá *${func.nome}*, você foi escalado para uma obra pela *T.R.E. Montagens*!\n\n`;
         texto += `🏗️ *Obra:* ${obra.nome}\n`;
-        texto += `📍 *Localização:* ${obra.local}\n`;
+
+        const endereco = (obra.local || '').trim();
+        if (endereco) {
+          const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
+          texto += `📍 *Localização:* ${endereco}\n`;
+          texto += `🗺️ *Abrir localização no Google Maps:*\n${linkMaps}\n`;
+        }
+
         texto += `💼 *Tipo:* ${tipo}\n`;
         if (tipo === 'Metro Quadrado') texto += `📐 *Metragem:* ${quantidade} m²\n`;
         if (tipo === 'Por Hora') texto += `⏱️ *Horas:* ${quantidade} h\n`;
         texto += `💰 *Valor Acordado:* R$ ${totalCalculado.toFixed(2)}\n`;
         texto += `📅 *Início:* ${dataInicio}\n`;
         if (instrucao) texto += `📝 *Instruções:* ${instrucao}\n`;
-        texto += `\nPor favor, confirme a recepção!`;
+        texto += `\nPor favor, confirme a recepção pelo site/aplicativo T.R.E.:\n${linkTRE}`;
 
         const numLimpo = func.whatsapp ? func.whatsapp.replace(/\D/g, '') : '';
         const link = numLimpo
