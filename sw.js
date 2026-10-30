@@ -10,3 +10,21 @@ self.addEventListener('fetch', event => {
     return response;
   }).catch(() => cached)));
 });
+
+
+// T.R.E. push notifications
+self.addEventListener("push", (event) => {
+  let data = {}; try { data = event.data ? event.data.json() : {}; } catch (_) {}
+  event.waitUntil(self.registration.showNotification(data.title || "T.R.E. Montagens", {
+    body: data.body || "Você tem uma atualização.", icon: "./logo-tre.jpg",
+    badge: "./logo-tre.jpg", data: {url: data.url || "./"}
+  }));
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "./", self.location.origin).href;
+  event.waitUntil(clients.matchAll({type:"window",includeUncontrolled:true}).then(wins => {
+    for (const c of wins) if (c.url.startsWith(self.location.origin) && "focus" in c) { c.navigate(target); return c.focus(); }
+    return clients.openWindow(target);
+  }));
+});
