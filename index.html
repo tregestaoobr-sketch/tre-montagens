@@ -1697,14 +1697,8 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
 
       const porDataCriacaoDesc = (a, b) =>
         String(b?.created_at || '').localeCompare(String(a?.created_at || ''));
-      // Ordena ponto pela data/hora trabalhadas, não pela hora em que foi enviado.
-      const porDataHoraPontoDesc = (a, b) => {
-        const ka = `${a?.data || ''}T${String(a?.hora || '00:00').slice(0,5)}`;
-        const kb = `${b?.data || ''}T${String(b?.hora || '00:00').slice(0,5)}`;
-        return kb.localeCompare(ka) || String(b?.created_at || '').localeCompare(String(a?.created_at || ''));
-      };
       equipe.sort((a, b) => String(a?.nome || '').localeCompare(String(b?.nome || ''), 'pt-BR'));
-      pontos.sort(porDataHoraPontoDesc);
+      pontos.sort(porDataCriacaoDesc);
       vales.sort(porDataCriacaoDesc);
       fotosObra.sort(porDataCriacaoDesc);
       pdfsObra.sort(porDataCriacaoDesc);
@@ -2199,22 +2193,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
        REGISTRAR PONTO
        ========================================================= */
 
-        // Push notifications: requires Supabase Auth session + deployed Edge Function.
-    async function notificarTRE(tipo, dados) {
-      const endpoint = window.TRE_NOTIFY_FUNCTION_URL || `${SUPABASE_URL}/functions/v1/tre-notificacoes`;
-      const client = garantirSupabase();
-      const { data: authData } = await client.auth.getSession();
-      const token = authData?.session?.access_token;
-      if (!token) return;
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'apikey': SUPABASE_ANON_KEY },
-        body: JSON.stringify({ tipo, dados })
-      });
-      if (!resp.ok) throw new Error(`Edge Function HTTP ${resp.status}`);
-      return resp.json().catch(() => ({}));
-    }
-
     async function registrarPonto() {
       const btn = document.getElementById('btn-ponto');
       const funcId = document.getElementById('ponto-funcionario').value;
@@ -2255,9 +2233,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         if (erroPonto) throw erroPonto;
         if (!resultadoPonto?.ok) throw new Error(resultadoPonto?.message || 'Não foi possível registrar o ponto.');
 
-        notificarTRE('ponto_registrado', {
-          funcionario_id: funcId, obra_id: obraId, data: dataPonto, hora: novoPonto.hora
-        }).catch(e => console.warn('Aviso de ponto não enviado:', e));
         alert("📍 Ponto e geolocalização registrados com sucesso!");
         document.getElementById('ponto-pin').value = '';
         carregarDadosDoSupabase();
@@ -2517,10 +2492,6 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         alert("Erro ao cadastrar obra: " + error.message);
         return;
       }
-
-      notificarTRE('obra_criada', {
-        obra_id: novaObra.id, obra_nome: novaObra.nome, local: novaObra.local
-      }).catch(e => console.warn('Aviso de nova obra não enviado:', e));
 
       document.getElementById('obra-nome').value = '';
       document.getElementById('obra-local').value = '';
@@ -3486,12 +3457,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.65}
         return;
       }
 
-      const pontosOrdenados = [...pontos].sort((a, b) => {
-        const ka = `${a?.data || ''}T${String(a?.hora || '00:00').slice(0,5)}`;
-        const kb = `${b?.data || ''}T${String(b?.hora || '00:00').slice(0,5)}`;
-        return kb.localeCompare(ka) || String(b?.created_at || '').localeCompare(String(a?.created_at || ''));
-      });
-      tbody.innerHTML = pontosOrdenados.map(p => {
+      tbody.innerHTML = pontos.map(p => {
         const func = equipe.find(f => f.id === p.funcionario_id);
         const obra = obras.find(o => o.id === p.obra_id);
         let gpsTxt = '<span class="text-gray-400">Sem GPS</span>';
