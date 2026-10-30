@@ -1,0 +1,3786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.R.E. Montagens — V5.3 Cronograma</title>
+
+  <!-- Configurações PWA e Ícone do App -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/jpeg" href="./logo-tre.jpg">
+  <link rel="shortcut icon" type="image/jpeg" href="./logo-tre.jpg">
+  <link rel="apple-touch-icon" href="./logo-tre.jpg">
+
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="T.R.E. Obras">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Bibliotecas para Exportação e Supabase -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    .bg-acustico-premium {
+      background-image:
+        linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.88),
+          rgba(15, 23, 42, 0.94)
+        ),
+        url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .card-acustico-blur {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+    }
+
+    img {
+      max-width: 100%;
+    }
+  </style>
+\n  <style id="tre-v3-modern-ui">
+    :root{--tre-navy:#0b1220;--tre-navy-2:#111c2f;--tre-orange:#f97316;--tre-orange-2:#fb923c;--tre-cream:#f6f8fb;--tre-text:#172033;--tre-muted:#64748b;--tre-border:#e6eaf0;--tre-card:rgba(255,255,255,.96)}
+    html{scroll-behavior:smooth}
+    body{background:var(--tre-cream)!important;color:var(--tre-text);letter-spacing:-.01em}
+    .bg-acustico-premium{background-image:linear-gradient(180deg,rgba(7,13,24,.88),rgba(7,13,24,.96)),url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1920&auto=format&fit=crop')!important;background-size:cover;background-position:center;background-attachment:fixed}
+    #pantalla-login{position:relative;overflow:hidden;background:radial-gradient(circle at 20% 20%,rgba(249,115,22,.18),transparent 30%),radial-gradient(circle at 80% 70%,rgba(59,130,246,.18),transparent 32%)}
+    #pantalla-login:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(3,8,20,.35),rgba(3,8,20,.72));pointer-events:none}
+    #pantalla-login>*{position:relative;z-index:1}
+    .card-acustico-blur{background:var(--tre-card)!important;border:1px solid rgba(255,255,255,.75)!important;border-radius:22px!important;box-shadow:0 18px 55px rgba(2,8,23,.12)!important;backdrop-filter:blur(16px)!important}
+    #pantalla-login .card-acustico-blur{max-width:430px!important;padding:38px!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 28px 80px rgba(0,0,0,.35)!important}
+    #pantalla-login img{width:86px!important;height:86px!important;border:4px solid rgba(249,115,22,.2)!important;box-shadow:0 12px 30px rgba(0,0,0,.18)!important}
+    #pantalla-login h1{font-size:30px!important;letter-spacing:-.04em!important}
+    #pantalla-login button{border:0!important;border-radius:14px!important;box-shadow:none!important;min-height:56px;transform:translateY(0);transition:transform .2s,box-shadow .2s,filter .2s!important}
+    #pantalla-login button:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(15,23,42,.16)!important;filter:brightness(1.03)}
+    #pantalla-login button:first-of-type{background:linear-gradient(135deg,#0f2749,#173c6e)!important}
+    #pantalla-login button:last-of-type{background:linear-gradient(135deg,#ea580c,#fb923c)!important}
+    #visao-funcionario{max-width:720px!important;padding:18px!important}
+    #visao-funcionario>.flex{background:linear-gradient(135deg,var(--tre-navy),#16243b)!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:20px!important;padding:13px 16px!important;box-shadow:0 15px 35px rgba(2,8,23,.18)!important;position:sticky;top:10px;z-index:20}
+    #visao-funcionario>.flex h2{font-size:16px!important}
+    #visao-funcionario>.card-acustico-blur{border-top:0!important;position:relative;overflow:hidden}
+    #visao-funcionario>.card-acustico-blur:before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:linear-gradient(90deg,#f97316,#fb923c,transparent)}
+    #visao-admin{background:linear-gradient(180deg,#f8fafc,#f1f5f9)!important}
+    #visao-admin>nav{background:rgba(11,18,32,.96)!important;border:0!important;padding:14px 22px!important;box-shadow:0 8px 28px rgba(2,8,23,.16)!important;position:sticky;top:0;z-index:40;backdrop-filter:blur(16px)}
+    #visao-admin>nav h1{font-size:17px!important;letter-spacing:-.02em}
+    #visao-admin>nav img{width:38px!important;height:38px!important}
+    #visao-admin>nav button{border-radius:10px!important;background:rgba(249,115,22,.14)!important;color:#fdba74!important;border:1px solid rgba(249,115,22,.22)}
+    #visao-admin>div:nth-child(2){background:rgba(255,255,255,.9)!important;color:var(--tre-text)!important;border:0!important;border-bottom:1px solid var(--tre-border)!important;box-shadow:0 4px 18px rgba(15,23,42,.04)!important;position:sticky;top:66px;z-index:35;backdrop-filter:blur(14px)}
+    #visao-admin>div:nth-child(2) button{color:#64748b!important;border:0!important;border-bottom:2px solid transparent!important;white-space:nowrap;min-height:50px}
+    #visao-admin>div:nth-child(2) button:hover{background:#f8fafc!important;color:#0f172a!important}
+    #visao-admin>div:nth-child(2) button.border-orange-500{color:#ea580c!important;border-bottom-color:#f97316!important;background:#fff7ed!important}
+    #visao-admin .p-4.max-w-5xl{max-width:1180px!important;padding:24px!important}
+    #visao-admin .aba-content{animation:treFade .24s ease both}
+    @keyframes treFade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    #visao-admin .card-acustico-blur{border-top:0!important;padding:22px!important;box-shadow:0 8px 30px rgba(15,23,42,.06)!important}
+    #visao-admin .card-acustico-blur h3{font-size:16px!important;letter-spacing:-.02em}
+    input,select,textarea{border-color:var(--tre-border)!important;background:#f8fafc!important;border-radius:12px!important;min-height:44px;transition:border-color .18s,box-shadow .18s,background .18s!important}
+    input:focus,select:focus,textarea:focus{background:#fff!important;border-color:#fb923c!important;box-shadow:0 0 0 4px rgba(249,115,22,.1)!important;outline:0!important}
+    button{transition:transform .18s,box-shadow .18s,background .18s,filter .18s!important}
+    #visao-admin button:not([disabled]):hover{transform:translateY(-1px)}
+    table{border-collapse:separate!important;border-spacing:0!important;overflow:hidden;border:1px solid var(--tre-border);border-radius:14px;background:#fff}
+    table th{background:#f8fafc!important;color:#64748b!important;font-size:10px!important;letter-spacing:.06em}
+    table td,table th{border-color:#edf0f4!important}
+    .tre-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px}
+    .tre-modal.hidden{display:none}
+    .tre-modal-backdrop{position:absolute;inset:0;background:rgba(2,8,23,.68);backdrop-filter:blur(8px)}
+    .tre-login-modal{position:relative;width:min(100%,430px);background:rgba(255,255,255,.98);border:1px solid rgba(255,255,255,.7);border-radius:24px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.3);animation:treModalIn .22s ease both}
+    @keyframes treModalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+    .tre-modal-close{position:absolute;right:14px;top:12px;width:36px;height:36px;border:0;border-radius:10px;background:#f1f5f9;color:#64748b;font-size:24px;line-height:1;cursor:pointer}
+    .tre-login-brand{display:flex;gap:14px;align-items:center;margin-bottom:24px}.tre-login-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#fff7ed,#ffedd5);font-size:24px}.tre-eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ea580c}.tre-login-brand h2{margin:2px 0 2px;font-size:23px;font-weight:800;color:#0f172a;letter-spacing:-.03em}.tre-login-brand p{margin:0;color:#64748b;font-size:12px}.tre-login-form{display:grid;gap:15px}.tre-login-form label{font-size:12px;font-weight:800;color:#334155}.tre-input-wrap{display:flex;align-items:center;gap:10px;margin-top:7px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:13px;padding:0 13px}.tre-input-wrap span{color:#94a3b8}.tre-input-wrap input{border:0!important;background:transparent!important;box-shadow:none!important;width:100%;padding:12px 0;min-height:44px}.tre-login-submit{border:0;border-radius:13px;background:linear-gradient(135deg,#ea580c,#fb923c);color:#fff;font-weight:800;min-height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 10px 22px rgba(234,88,12,.22)}.tre-login-submit:disabled{opacity:.7;cursor:wait}.tre-login-error{margin:0;padding:10px 12px;border-radius:11px;background:#fef2f2;color:#b91c1c;font-size:11px;font-weight:700}.tre-secure-note{margin-top:18px;padding-top:15px;border-top:1px solid #eef2f7;color:#94a3b8;font-size:10px;text-align:center}.tre-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:treSpin .7s linear infinite}@keyframes treSpin{to{transform:rotate(360deg)}}
+    @media(max-width:640px){#pantalla-login .card-acustico-blur{padding:30px 22px!important}#visao-admin>div:nth-child(2){top:64px}#visao-admin .p-4.max-w-5xl{padding:12px!important}#visao-admin>nav{padding:12px 14px!important}.tre-login-modal{padding:24px 20px}.tre-login-brand h2{font-size:20px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  </style>\n
+
+<style id="tre-v4-polish">
+:root{
+  --tre-navy:#0b1220;--tre-navy-2:#14213a;--tre-orange:#f97316;--tre-orange-soft:#fff7ed;
+  --tre-bg:#f4f7fb;--tre-surface:#ffffff;--tre-line:#e7ebf1;--tre-text:#152033;--tre-muted:#64748b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--tre-bg)!important;color:var(--tre-text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+/* Login: aparência de aplicativo */
+#pantalla-login{min-height:100dvh!important;padding:20px!important;background:linear-gradient(145deg,#07101f 0%,#0d1b31 52%,#162a46 100%)!important}
+#pantalla-login:after{content:"";position:absolute;width:360px;height:360px;right:-180px;top:-120px;border-radius:50%;background:rgba(249,115,22,.16);filter:blur(10px);pointer-events:none}
+#pantalla-login .card-acustico-blur{width:100%;margin:auto;overflow:hidden;padding:32px 24px!important;border-radius:26px!important;background:rgba(255,255,255,.97)!important}
+#pantalla-login .card-acustico-blur:after{content:"T.R.E. MONTAGENS • GESTÃO DE OBRAS";display:block;margin-top:22px;padding-top:16px;border-top:1px solid #edf0f4;color:#94a3b8;font-size:9px;font-weight:800;letter-spacing:.12em}
+#pantalla-login p{line-height:1.4}
+#pantalla-login button{min-height:58px!important;font-size:15px!important;letter-spacing:-.01em}
+/* Área do colaborador */
+#visao-funcionario{max-width:760px!important;padding:12px 12px calc(28px + env(safe-area-inset-bottom))!important}
+#visao-funcionario>.flex{top:8px!important;margin-bottom:14px!important;padding:11px 13px!important;border-radius:18px!important}
+#visao-funcionario>.flex button{min-height:40px;padding:0 13px!important}
+#visao-funcionario>.card-acustico-blur{padding:18px!important;margin-top:12px!important;border-radius:18px!important}
+#visao-funcionario>.card-acustico-blur h3{font-size:15px!important;line-height:1.35}
+#visao-funcionario label{font-size:12px!important;color:#475569!important}
+#visao-funcionario input,#visao-funcionario select,#visao-funcionario textarea{min-height:48px!important}
+#visao-funcionario button{min-height:48px}
+/* Administrador */
+#visao-admin{min-height:100dvh!important;background:var(--tre-bg)!important}
+#visao-admin>nav{min-height:62px;padding:10px 14px!important}
+#visao-admin>nav h1{font-size:15px!important}
+#visao-admin>nav button{min-height:38px;padding:0 12px!important}
+#visao-admin>div:nth-child(2){top:62px!important;overflow-x:auto;scrollbar-width:none;padding:0 6px}
+#visao-admin>div:nth-child(2)::-webkit-scrollbar{display:none}
+#visao-admin>div:nth-child(2) button{flex:0 0 auto!important;padding:0 13px!important;font-size:11px!important;min-height:48px!important}
+#visao-admin .p-4.max-w-5xl{padding:14px!important;padding-bottom:30px!important}
+#visao-admin .card-acustico-blur{padding:17px!important;border-radius:18px!important}
+#visao-admin .card-acustico-blur h3{font-size:15px!important}
+#visao-admin .card-acustico-blur p{line-height:1.45}
+#visao-admin input,#visao-admin select,#visao-admin textarea{min-height:48px!important}
+#visao-admin button{min-height:42px}
+#visao-admin table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+#visao-admin table thead,#visao-admin table tbody{width:100%}
+/* Botões: consistência visual sem alterar classes/ações */
+#visao-admin .bg-orange-500,#visao-admin .bg-orange-600{box-shadow:0 7px 18px rgba(249,115,22,.18)}
+#visao-admin .bg-emerald-600{box-shadow:0 7px 18px rgba(5,150,105,.14)}
+#visao-admin .bg-blue-900,#visao-admin .bg-blue-950{box-shadow:0 7px 18px rgba(15,39,73,.14)}
+/* Modais: mobile first */
+#visao-admin [class*="fixed"][class*="inset-0"]>div{max-height:calc(100dvh - 28px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tre-modal{padding:12px!important}
+.tre-login-modal{max-height:calc(100dvh - 24px);overflow:auto}
+/* Campos e feedback */
+input::placeholder,textarea::placeholder{color:#94a3b8}
+select{color:#334155}
+input:disabled,select:disabled,textarea:disabled{opacity:.65}
+/* Área de toque e acessibilidade */
+@media(max-width:640px){
+  #pantalla-login .card-acustico-blur{padding:28px 20px!important}
+  #pantalla-login h1{font-size:26px!important}
+  #visao-admin>nav{top:0}
+  #visao-admin>div:nth-child(2){top:62px}
+  #visao-admin .grid{gap:10px!important}
+  #visao-admin .flex{flex-wrap:wrap}
+  #visao-admin .card-acustico-blur .flex.gap-2{gap:7px!important}
+  .tre-login-modal{border-radius:20px!important;padding:22px 18px!important}
+}
+@media(min-width:768px){
+  #visao-admin .card-acustico-blur{padding:22px!important}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+
+<body data-tre-version="5.0" class="bg-acustico-premium text-gray-800 font-sans min-h-screen flex flex-col">
+
+  <!-- =========================================================
+       TELA DE LOGIN
+       ========================================================= -->
+  <div id="pantalla-login" class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="card-acustico-blur p-8 rounded-2xl shadow-2xl max-w-md w-full text-center border-t-4 border-orange-500">
+
+      <!-- LOGO T.R.E. -->
+      <div class="mb-4 flex justify-center">
+        <img
+          src="./logo-tre.jpg"
+          alt="Logo T.R.E. Montagens"
+          class="w-24 h-24 rounded-full object-cover shadow-lg border-2 border-orange-500"
+        >
+      </div>
+
+      <h1 class="text-3xl font-extrabold text-blue-950 tracking-tight mb-1">
+        T.R.E. Montagens
+      </h1>
+
+      <p class="text-orange-600 font-medium text-sm tracking-wide uppercase mb-8">
+        Gestão de Equipe e Obras
+      </p>
+
+      <div class="space-y-4">
+
+        <button
+          onclick="entrarComoFuncionario()"
+          class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition duration-200 border-l-4 border-orange-500 cursor-pointer flex items-center justify-center gap-2"
+        >
+          <span>👷</span>
+          Acesso Funcionário
+        </button>
+
+        <button
+          onclick="solicitarSenhaAdmin()"
+          class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition duration-200 cursor-pointer flex items-center justify-center gap-2"
+        >
+          <span>👑</span>
+          Acesso Administrador
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- LOGIN ADMIN MODERNO -->
+  <div id="modal-login-admin" class="tre-modal hidden" aria-hidden="true">
+    <div class="tre-modal-backdrop" onclick="fecharLoginAdmin()"></div>
+    <div class="tre-login-modal" role="dialog" aria-modal="true" aria-labelledby="titulo-login-admin">
+      <button class="tre-modal-close" type="button" onclick="fecharLoginAdmin()" aria-label="Fechar">×</button>
+      <div class="tre-login-brand">
+        <div class="tre-login-icon">👑</div>
+        <div>
+          <span class="tre-eyebrow">Área restrita</span>
+          <h2 id="titulo-login-admin">Acesso Administrativo</h2>
+          <p>Entre para gerenciar obras, equipe e pagamentos.</p>
+        </div>
+      </div>
+      <form id="form-login-admin" class="tre-login-form" onsubmit="event.preventDefault(); confirmarLoginAdmin();">
+        <label>E-mail
+          <div class="tre-input-wrap"><span>✉</span><input id="login-admin-email" type="email" autocomplete="username" placeholder="seu@email.com" required></div>
+        </label>
+        <label>Senha
+          <div class="tre-input-wrap"><span>●</span><input id="login-admin-senha" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+        </label>
+        <p id="login-admin-erro" class="tre-login-error hidden"></p>
+        <button id="btn-login-admin" class="tre-login-submit" type="submit"><span>Entrar no painel</span><span>→</span></button>
+      </form>
+      <div class="tre-secure-note"><span>🔒</span> Autenticação protegida pelo Supabase</div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       VISÃO DO FUNCIONÁRIO
+       ========================================================= -->
+  <div
+    id="visao-funcionario"
+    class="hidden p-4 max-w-lg mx-auto min-h-screen pb-12 w-full"
+  >
+
+    <div class="flex justify-between items-center mb-6 bg-blue-950 p-4 rounded-2xl border-b-2 border-orange-500 shadow-md">
+
+      <div class="flex items-center gap-3">
+
+        <img
+          src="./logo-tre.jpg"
+          alt="Logo T.R.E. Montagens"
+          class="w-10 h-10 rounded-full object-cover border border-orange-500"
+        >
+
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>👷</span>
+          Área do Colaborador
+        </h2>
+
+      </div>
+
+      <button
+        onclick="sair()"
+        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition"
+      >
+        Sair
+      </button>
+
+    </div>
+
+
+    <!-- CARD 1: PONTO -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 border-t-4 border-blue-900">
+
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2 flex items-center justify-between">
+        <span>📍 Registro de Ponto Diário</span>
+        <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-semibold">
+          Obras / Acabamento
+        </span>
+      </h3>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione o seu Nome:
+        </label>
+
+        <select
+          id="ponto-funcionario"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione a Obra:
+        </label>
+
+        <select
+          id="ponto-obra"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Data:
+        </label>
+
+        <input
+          type="date"
+          id="ponto-data"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          PIN / Senha do Colaborador:
+        </label>
+
+        <input
+          type="password"
+          id="ponto-pin"
+          placeholder="Digite seu PIN individual"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+        >
+      </div>
+
+      <button
+        id="btn-ponto"
+        onclick="registrarPonto()"
+        class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition border-b-4 border-orange-500 cursor-pointer disabled:opacity-50"
+      >
+        📍 BATER PONTO HOJE
+      </button>
+
+    </div>
+
+
+    <!-- CONSULTA SOMENTE LEITURA: INFORMAÇÕES DA OBRA -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-emerald-600">
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2">📋 Consultar informações da obra</h3>
+      <p class="text-sm text-gray-600">Consulte endereço, complemento, representante e observações, mesmo quando a obra não estiver designada para você. Esta área é somente para consulta.</p>
+      <div>
+        <label for="consulta-info-obra" class="block text-sm font-semibold mb-1 text-gray-700">Selecione a obra:</label>
+        <select id="consulta-info-obra" onchange="mostrarInformacoesObraFuncionario()" class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+          <option value="">Selecione a Obra...</option>
+        </select>
+      </div>
+      <div id="consulta-info-obra-detalhes" class="hidden rounded-xl border border-emerald-100 bg-emerald-50 p-4 space-y-2 text-sm text-gray-700"></div>
+    </div>
+
+    <!-- CARD 1.5: STATUS DA OBRA -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-amber-600">
+
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2 flex items-center justify-between">
+        <span>🏗️ Atualizar Status da Obra</span>
+        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-semibold">
+          Controle de Campo
+        </span>
+      </h3>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione a Obra:
+        </label>
+        <select
+          id="func-status-obra"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-amber-600 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Como está a situação da obra?
+        </label>
+        <select
+          id="func-status-situacao"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-amber-600 focus:outline-none"
+        >
+          <option value="Em Andamento">🔨 Em Andamento (Falta coisa para fazer)</option>
+          <option value="Pronta">✨ Obra Pronta (Ajustes finais concluídos)</option>
+          <option value="Finalizada">🏁 100% Finalizada (Entregue ao cliente)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Seu Nome (para registro):
+        </label>
+        <select
+          id="func-status-responsavel"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-amber-600 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          PIN / Senha do Colaborador:
+        </label>
+        <input
+          type="password"
+          id="func-status-pin"
+          placeholder="Digite seu PIN individual"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-amber-600 focus:outline-none"
+        >
+      </div>
+
+      <button
+        onclick="atualizarStatusObraPeloFuncionario()"
+        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-xl shadow-lg text-base transition border-b-4 border-blue-950 cursor-pointer"
+      >
+        💾 SALVAR STATUS DA OBRA
+      </button>
+
+    </div>
+
+
+    <!-- CARD 2: PDFs -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-purple-600">
+
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2 flex items-center justify-between">
+        <span>📄 PDFs & Projetos das Obras</span>
+        <span class="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-semibold">
+          Projetos & Plantas
+        </span>
+      </h3>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione a Obra para ver os Arquivos:
+        </label>
+        <select
+          id="consulta-pdf-obra"
+          onchange="buscarPdfsObra()"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-600 focus:outline-none"
+        ></select>
+      </div>
+
+      <div id="container-pdf-obra" class="space-y-2 pt-2">
+        <p class="text-xs text-gray-500 italic">
+          Selecione uma obra acima para carregar as plantas e relatórios anexados.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- CARD 3: VALES -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-orange-500">
+
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2">
+        🧾 Enviar Vale, Ressarcimento ou Comprovante
+      </h3>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Tipo de Lançamento:
+        </label>
+        <select
+          id="vale-tipo-lacamento"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+        >
+          <option value="Vale">💸 Vale / Adiantamento (Desconta do pagamento)</option>
+          <option value="Ressarcimento">🍔 Ressarcimento (Almoço, Estacionamento, Passagem, Material)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione o seu Nome:
+        </label>
+        <select
+          id="vale-funcionario"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione a Obra:
+        </label>
+        <select
+          id="vale-obra"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+        ></select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-gray-700">
+            Valor (R$):
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            id="vale-valor"
+            placeholder="0,00"
+            class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+          >
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-gray-700">
+            Data:
+          </label>
+          <input
+            type="date"
+            id="vale-data"
+            class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+          >
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Descrição / Motivo:
+        </label>
+        <input
+          type="text"
+          id="vale-descricao"
+          placeholder="Ex: Almoço, Estacionamento, Vale semanal, Pedágio"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Foto / Comprovante:
+        </label>
+        <input
+          type="file"
+          id="vale-comprovante-file"
+          accept="image/*"
+          class="w-full p-2.5 border rounded-xl bg-gray-50 text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-orange-500 file:text-white hover:file:bg-orange-600 cursor-pointer"
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          PIN / Senha do Colaborador:
+        </label>
+        <input
+          type="password"
+          id="vale-pin"
+          placeholder="Digite seu PIN individual"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-900 focus:outline-none"
+        >
+      </div>
+
+      <button
+        id="btn-vale"
+        onclick="registrarVale()"
+        class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl shadow-lg text-base transition border-b-4 border-blue-900 cursor-pointer disabled:opacity-50"
+      >
+        💸 ENVIAR VALE / RESSARCIMENTO
+      </button>
+
+    </div>
+
+
+    <!-- CARD 4: FOTOS E VÍDEOS -->
+    <div class="card-acustico-blur p-6 rounded-2xl shadow-xl space-y-4 mt-6 border-t-4 border-emerald-600">
+
+      <h3 class="text-lg font-bold text-blue-950 border-b pb-2 flex items-center justify-between">
+        <span>📸 Diário de Obra (Fotos e Vídeos)</span>
+        <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">
+          Múltiplos Arquivos
+        </span>
+      </h3>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione o seu Nome:
+        </label>
+        <select
+          id="foto-funcionario"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Selecione a Obra:
+        </label>
+        <select
+          id="foto-obra"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+        ></select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Tipo de Registro:
+        </label>
+        <select
+          id="foto-tipo"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+        >
+          <option value="Finalização">🏁 Finalização / Conclusão da Obra</option>
+          <option value="Observação">⚠️ Observação / Problema / Ajuste</option>
+          <option value="Andamento">🔨 Registro de Andamento Diário</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Fotos ou Vídeos da Obra:
+        </label>
+        <input
+          type="file"
+          id="foto-file"
+          accept="image/*,video/*"
+          multiple
+          class="w-full p-2.5 border rounded-xl bg-gray-50 text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer"
+        >
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          Observações / Comentários:
+        </label>
+        <textarea
+          id="foto-observacao"
+          rows="2"
+          placeholder="Ex: Painéis instalados conforme projeto, faltando apenas limpeza."
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700">
+          PIN / Senha do Colaborador:
+        </label>
+        <input
+          type="password"
+          id="foto-pin"
+          placeholder="Digite seu PIN individual"
+          class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+        >
+      </div>
+
+      <button
+        id="btn-foto"
+        onclick="enviarFotoObra()"
+        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg text-base transition border-b-4 border-blue-950 cursor-pointer disabled:opacity-50"
+      >
+        📤 ENVIAR PARA A GALERIA DA OBRA
+      </button>
+
+    </div>
+
+
+
+  </div>
+
+
+  <!-- =========================================================
+       VISÃO ADMINISTRADOR
+       ========================================================= -->
+  <div id="visao-admin" class="hidden min-h-screen flex flex-col w-full">
+
+    <nav class="bg-blue-950 text-white p-4 flex flex-wrap justify-between items-center gap-2 border-b-2 border-orange-500 shadow-md">
+      <div class="flex items-center gap-3">
+        <img
+          src="./logo-tre.jpg"
+          alt="Logo T.R.E. Montagens"
+          class="w-8 h-8 rounded-full object-cover border border-orange-500"
+        >
+        <h1 class="text-xl font-bold tracking-tight">
+          T.R.E. | Painel do Patrão
+        </h1>
+      </div>
+      <button
+        onclick="sair()"
+        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition"
+      >
+        Sair
+      </button>
+    </nav>
+
+
+    <!-- MENU ADMIN -->
+    <div class="bg-blue-900 text-white flex overflow-x-auto text-sm font-semibold border-t border-blue-800 shadow-inner">
+      <button
+        id="tab-btn-obras"
+        onclick="mudarAbaAdmin('obras')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-orange-500 text-orange-400 font-bold transition flex items-center gap-1.5"
+      >
+        <span>🏗️</span> Obras, Status & Galeria
+      </button>
+
+      <button
+        id="tab-btn-pendencias"
+        onclick="mudarAbaAdmin('pendencias')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>🚦</span> Pendências
+      </button>
+
+      <button
+        id="tab-btn-cronograma"
+        onclick="mudarAbaAdmin('cronograma')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>🗓️</span> Cronograma
+      </button>
+
+      <button
+        id="tab-btn-equipe"
+        onclick="mudarAbaAdmin('equipe')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>👥</span> Equipe
+      </button>
+
+      <button
+        id="tab-btn-designar"
+        onclick="mudarAbaAdmin('designar')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>📲</span> Designar Obra
+      </button>
+
+      <button
+        id="tab-btn-presencas"
+        onclick="mudarAbaAdmin('presencas')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>📅</span> Presenças
+      </button>
+
+      <button
+        id="tab-btn-comprovantes"
+        onclick="mudarAbaAdmin('comprovantes')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>📑</span> Comprovantes
+      </button>
+
+      <button
+        id="tab-btn-fechamento"
+        onclick="mudarAbaAdmin('fechamento')"
+        class="px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5"
+      >
+        <span>📊</span> Fechamento
+      </button>
+    </div>
+
+
+    <div class="p-4 max-w-5xl mx-auto w-full flex-grow">
+
+      <!-- =====================================================
+           ABA PAINEL DE PENDÊNCIAS (USA OS REGISTROS EXISTENTES)
+           ===================================================== -->
+      <div id="aba-pendencias" class="aba-content hidden space-y-6">
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <h3 class="text-xl font-extrabold text-blue-950">🚦 Central de Controle — Pendências e Diário de Obra</h3>
+              <p class="text-sm text-gray-600 mt-1">Reúne os registros e as fotos que os funcionários já enviam. Não cria registros duplicados nem altera o fluxo atual.</p>
+            </div>
+            <button onclick="renderizarPainelPendencias()" class="bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm px-4 py-2 rounded-xl">↻ Atualizar painel</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4"><p class="text-xs font-bold uppercase text-amber-800">Obras em andamento</p><p id="painel-qtd-andamento" class="text-3xl font-extrabold text-amber-900 mt-1">0</p></div>
+            <div class="rounded-xl border border-red-200 bg-red-50 p-4"><p class="text-xs font-bold uppercase text-red-800">Registros sinalizados</p><p id="painel-qtd-pendencias" class="text-3xl font-extrabold text-red-900 mt-1">0</p><p class="text-[11px] text-red-700 mt-1">Tipo “Observação / Problema / Ajuste”</p></div>
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4"><p class="text-xs font-bold uppercase text-emerald-800">Fotos e vídeos registrados</p><p id="painel-qtd-midias" class="text-3xl font-extrabold text-emerald-900 mt-1">0</p></div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input id="painel-busca" oninput="renderizarListaPainelPendencias()" type="search" placeholder="Buscar obra, funcionário ou observação..." class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <select id="painel-filtro" onchange="renderizarListaPainelPendencias()" class="w-full p-3 border rounded-xl bg-gray-50">
+              <option value="todos">Todos os registros</option>
+              <option value="pendencias">Somente observações / problemas</option>
+              <option value="andamento">Somente andamento diário</option>
+              <option value="finalizacao">Somente finalizações</option>
+            </select>
+          </div>
+          <div class="flex items-start gap-2 rounded-xl bg-blue-50 border border-blue-100 p-3 text-xs text-blue-900">
+            <span class="text-lg">ℹ️</span><p>Este painel identifica registros marcados pelo funcionário como “Observação / Problema / Ajuste”. Ele não presume que uma observação já foi resolvida. A confirmação de resolução poderá ser adicionada depois com armazenamento compartilhado no banco.</p>
+          </div>
+          <div id="painel-lista-registros" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           ABA OBRAS
+           ===================================================== -->
+      <div id="aba-obras" class="aba-content space-y-6">
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500">
+          <h3 class="text-lg font-bold text-blue-950 mb-4">
+            Cadastrar Nova Obra
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="obra-nome" placeholder="Número / Nome da Obra (ex: Obra 123 - Avanço RJ)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <input type="text" id="obra-componente" placeholder="Complemento (ex.: Torre Aroeira / Garagem / Dock)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <input type="text" id="obra-representante" placeholder="Representante (ex: Mestre / Engenheiro)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <input type="text" id="obra-local" placeholder="Localização / Endereço" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <textarea id="obra-observacoes" rows="3" placeholder="Observações / instruções da obra (visível para o funcionário)" class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none md:col-span-2"></textarea>
+          </div>
+          <button
+            onclick="cadastrarObra()"
+            class="mt-4 bg-orange-500 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-orange-600 transition shadow-md"
+          >
+            Cadastrar Obra
+          </button>
+        </div>
+
+
+        <!-- SEÇÃO DE FILTRO / VISUALIZAÇÃO DE OBRAS POR STATUS -->
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-blue-900 space-y-6">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b pb-3">
+            <div>
+              <h3 class="text-lg font-bold text-blue-950">
+                🏗️ Histórico e Gestão de Obras
+              </h3>
+              <p class="text-xs text-gray-500">
+                Acompanhe o que está em andamento, pronto ou finalizado (definido pela equipe ou patrão)
+              </p>
+            </div>
+            
+            <div class="flex gap-2">
+              <button onclick="filtrarObrasPatrao('Em Andamento')" id="filtro-andamento" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition">Em Andamento</button>
+              <button onclick="filtrarObrasPatrao('Pronta')" id="filtro-pronta" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Prontas</button>
+              <button onclick="filtrarObrasPatrao('Finalizada')" id="filtro-finalizada" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Finalizadas</button>
+              <button onclick="filtrarObrasPatrao('todas')" id="filtro-todas" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition">Todas</button>
+            </div>
+          </div>
+
+          <ul
+            id="lista-obras"
+            class="divide-y text-gray-700 space-y-3"
+          ></ul>
+        </div>
+
+
+        <!-- MODAL DETALHES / DATAS DA OBRA -->
+        <div id="modal-detalhes-obra" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this) fecharModalDetalhesObra()">
+          <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border-t-4 border-orange-500" role="dialog" aria-modal="true" aria-labelledby="modal-detalhes-obra-titulo">
+            <div class="flex justify-between items-start gap-3 mb-5 border-b pb-3">
+              <div><p class="text-[10px] uppercase tracking-wider font-extrabold text-orange-600">Detalhes da obra</p><h3 id="modal-detalhes-obra-titulo" class="text-xl font-bold text-blue-950"></h3><p id="modal-detalhes-obra-status" class="text-sm text-gray-500 mt-1"></p></div>
+              <button type="button" onclick="fecharModalDetalhesObra()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-1 rounded-lg">✕</button>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 rounded-xl bg-slate-50 border border-slate-200 p-4"><span class="text-xl">📅</span><div><p class="text-xs font-semibold text-gray-500">Início da obra</p><p id="modal-detalhes-obra-inicio" class="font-bold text-blue-950 mt-1">Data não registrada</p></div></div>
+              <div id="bloco-data-termino-obra" class="hidden flex items-start gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-4"><span class="text-xl">🏁</span><div><p class="text-xs font-semibold text-emerald-700">Finalizada em</p><p id="modal-detalhes-obra-termino" class="font-bold text-emerald-900 mt-1">Data não registrada</p></div></div>
+              <p id="modal-detalhes-obra-aviso" class="text-xs text-gray-500"></p>
+              <div class="border-t pt-4 mt-4 space-y-3">
+                <p class="text-sm font-extrabold text-blue-950">✏️ Editar datas da obra</p>
+                <input type="hidden" id="modal-datas-obra-id">
+                <div><label for="modal-datas-obra-inicio" class="block text-xs font-semibold text-gray-600 mb-1">Data de início</label><input id="modal-datas-obra-inicio" type="date" class="w-full p-3 border rounded-xl bg-gray-50"></div>
+                <div><label for="modal-datas-obra-termino" class="block text-xs font-semibold text-gray-600 mb-1">Data de finalização (se houver)</label><input id="modal-datas-obra-termino" type="date" class="w-full p-3 border rounded-xl bg-gray-50"></div>
+                <button type="button" onclick="salvarDatasObra()" id="btn-salvar-datas-obra" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl">💾 Salvar datas</button>
+                <p class="text-[11px] text-gray-500">Você pode corrigir datas de obras antigas. Deixe a finalização vazia se a obra ainda não foi concluída.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL GALERIA -->
+        <div
+          id="modal-galeria-obra"
+          class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
+          <div class="bg-white rounded-2xl max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto shadow-2xl relative border-t-4 border-orange-500">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+              <div>
+                <h3
+                  id="modal-obra-titulo"
+                  class="text-xl font-bold text-blue-950"
+                ></h3>
+                <p class="text-xs text-gray-500">
+                  Galeria de Fotos, Vídeos, Finalizações e Observações
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button
+                  onclick="exportarGaleriaZip()"
+                  class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition"
+                >
+                  📥 Exportar Fotos (ZIP)
+                </button>
+                <button
+                  onclick="fecharModalGaleria()"
+                  class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-1 rounded-lg text-sm"
+                >
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="modal-galeria-conteudo"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4"
+            ></div>
+          </div>
+        </div>
+
+
+        <!-- MODAL PDF -->
+        <div
+          id="modal-anexar-pdf"
+          class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
+          <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative border-t-4 border-purple-600">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+              <div>
+                <h3 class="text-lg font-bold text-blue-950">
+                  Projetos & PDFs da Obra
+                </h3>
+                <p
+                  id="modal-pdf-obra-nome"
+                  class="text-xs text-purple-700 font-semibold"
+                ></p>
+              </div>
+              <button
+                onclick="fecharModalPdf()"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-1 rounded-lg text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <input
+              type="hidden"
+              id="modal-pdf-obra-id"
+            >
+
+            <div class="space-y-4">
+              <div class="bg-purple-50 p-4 rounded-xl border border-purple-200 space-y-3">
+                <h4 class="text-xs font-bold text-purple-900 uppercase tracking-wide">
+                  Anexar Novo Projeto / PDF
+                </h4>
+                <input
+                  type="text"
+                  id="pdf-titulo-input"
+                  placeholder="Nome/Prefixo do Documento"
+                  class="w-full p-2.5 border rounded-xl bg-white text-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
+                >
+                <input
+                  type="file"
+                  id="pdf-file-input"
+                  accept="application/pdf"
+                  multiple
+                  class="w-full p-2 border rounded-xl bg-white text-xs text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer"
+                >
+                <button
+                  id="btn-pdf-salvar"
+                  onclick="salvarPdfObra()"
+                  class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl shadow transition text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  <span>📎</span>
+                  Adicionar PDF(s) à Obra
+                </button>
+              </div>
+
+              <div>
+                <h4 class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">
+                  Arquivos Já Anexados:
+                </h4>
+                <div
+                  id="lista-pdfs-existentes"
+                  class="space-y-2 max-h-48 overflow-y-auto pr-1"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- MODAL WHATSAPP -->
+        <div
+          id="modal-whatsapp-obra"
+          class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
+          <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border-t-4 border-emerald-500">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+              <div>
+                <h3 class="text-lg font-bold text-blue-950 flex items-center gap-1.5">
+                  📲 Enviar Aviso por WhatsApp
+                </h3>
+                <p
+                  id="modal-whatsapp-obra-nome"
+                  class="text-xs text-emerald-700 font-semibold"
+                ></p>
+              </div>
+              <button
+                onclick="fecharModalWhatsapp()"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-3 py-1 rounded-lg text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <input type="hidden" id="modal-whatsapp-obra-id">
+            <input type="hidden" id="modal-whatsapp-obra-local">
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">
+                  Selecione o Funcionário:
+                </label>
+                <select
+                  id="modal-whatsapp-funcionario"
+                  class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                ></select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">
+                  Instrução / Orientação Adicional:
+                </label>
+                <textarea
+                  id="modal-whatsapp-mensagem"
+                  rows="3"
+                  placeholder="Ex: Favor estar na obra às 07:30."
+                  class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <button
+                onclick="enviarMensagemWhatsapp()"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2"
+              >
+                <span>💬</span>
+                Abrir WhatsApp com Mensagem
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           ABA EQUIPE
+           ===================================================== -->
+      <!-- ABA CRONOGRAMA: resumo calculado dos registros existentes -->
+      <div id="aba-cronograma" class="aba-content hidden space-y-6">
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500 space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div><h3 class="text-lg font-bold text-blue-950">🗓️ Cronograma de Obras</h3><p class="text-sm text-gray-500">Datas, duração, equipe e diárias calculadas pelos pontos existentes.</p></div>
+            <button onclick="renderizarCronograma()" class="bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm px-4 py-2 rounded-xl">↻ Atualizar</button>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="cronograma-resumo"></div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input id="cronograma-busca" oninput="renderizarCronograma()" type="search" placeholder="Buscar obra, local ou complemento..." class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            <select id="cronograma-filtro-status" onchange="renderizarCronograma()" class="p-3 border rounded-xl bg-gray-50"><option value="todas">Todas as situações</option><option value="Em Andamento">Em andamento</option><option value="Pronta">Prontas</option><option value="Finalizada">Finalizadas</option></select>
+            <select id="cronograma-ordem" onchange="renderizarCronograma()" class="p-3 border rounded-xl bg-gray-50"><option value="recentes">Mais recentes primeiro</option><option value="antigas">Mais antigas primeiro</option><option value="nome">Nome da obra</option></select>
+          </div>
+          <div id="cronograma-lista" class="space-y-3"></div>
+          <p class="text-xs text-gray-500">Observação: a duração usa a data de início até hoje (ou até a finalização). Dias trabalhados contam dias distintos com ponto registrado, por funcionário e obra. Datas antigas sem histórico confiável não são inventadas.</p>
+        </div>
+      </div>
+
+      <div id="aba-equipe" class="aba-content hidden space-y-6">
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500">
+          <h3 class="text-lg font-bold text-blue-950 mb-4" id="titulo-form-func">
+            Cadastrar Novo Colaborador
+          </h3>
+
+          <input type="hidden" id="edit-func-id">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              id="func-nome"
+              placeholder="Nome Completo"
+              class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+            <input
+              type="text"
+              id="func-whatsapp"
+              placeholder="WhatsApp (ex: 77999998888)"
+              class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+            <input
+              type="number"
+              step="0.01"
+              id="func-diaria"
+              placeholder="Valor Diária Base (R$)"
+              class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+            <input
+              type="text"
+              id="func-pin"
+              placeholder="PIN Individual (4 dígitos)"
+              class="p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            >
+          </div>
+
+          <div class="flex gap-2 mt-4">
+            <button
+              id="btn-salvar-func"
+              onclick="cadastrarFuncionario()"
+              class="bg-orange-500 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-orange-600 transition shadow-md"
+            >
+              Cadastrar Funcionário
+            </button>
+            <button
+              id="btn-cancelar-edicao"
+              onclick="cancelarEdicaoFuncionario()"
+              class="hidden bg-gray-400 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-gray-500 transition shadow-md"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-blue-900">
+          <h3 class="text-lg font-bold text-blue-950 mb-4">
+            Equipe Cadastrada
+          </h3>
+          <p class="text-xs text-gray-500 mb-3">
+            Nota: O histórico permanecerá salvo mesmo desativando colaboradores.
+          </p>
+          <ul
+            id="lista-equipe"
+            class="divide-y text-gray-700"
+          ></ul>
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           ABA DESIGNAR
+           ===================================================== -->
+      <div id="aba-designar" class="aba-content hidden space-y-6">
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-emerald-600 space-y-4">
+          <h3 class="text-lg font-bold text-blue-950 border-b pb-2 flex items-center gap-2">
+            <span>📲 Designar Funcionário para Obra (Diária ou Empreita)</span>
+          </h3>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-700">
+              Selecione o Colaborador:
+            </label>
+            <select
+              id="designar-funcionario"
+              onchange="preencherValorDiariaPadrao()"
+              class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+            ></select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-700">
+              Selecione a Obra:
+            </label>
+            <select
+              id="designar-obra"
+              class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+            ></select>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-gray-700">
+                Tipo de Contratação / Pagamento:
+              </label>
+              <select
+                id="designar-tipo"
+                onchange="alternarCamposDesignacao(); preencherValorDiariaPadrao()"
+                class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+              >
+                <option value="Diária">Diária (Valor fixo por dia)</option>
+                <option value="Empreita Global">Empreita (Valor fechado total)</option>
+                <option value="Metro Quadrado">Empreita por Metro Quadrado (m²)</option>
+                <option value="Por Hora">Por Hora (Valor por hora trabalhada)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-gray-700" id="label-valor-variavel">
+                Valor Acertado (R$):
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                id="designar-valor"
+                placeholder="Ex: 1500.00"
+                class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+              >
+            </div>
+          </div>
+
+          <div id="bloco-metragem" class="hidden">
+            <label class="block text-sm font-semibold mb-1 text-gray-700">
+              Área Total (m²) ou Quantidade de Horas:
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              id="designar-quantidade"
+              placeholder="Ex: 45.5 (m² ou horas)"
+              class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+            >
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-700">
+              Data de Início / Presença:
+            </label>
+            <input
+              type="date"
+              id="designar-data"
+              class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+            >
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1 text-gray-700">
+              Instruções / Detalhes da Execução ou Empreita:
+            </label>
+            <textarea
+              id="designar-instrucao"
+              rows="3"
+              placeholder="Ex: Instalação de painéis acústicos na sala de reuniões. Serviço de empreita fechado."
+              class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+            ></textarea>
+          </div>
+
+          <button
+            id="btn-designar"
+            onclick="confirmarEEnviarDesignacao()"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg text-base transition border-b-4 border-blue-950 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <span>💬</span>
+            DESIGNAR E ENVIAR CONVOCAÇÃO VIA WHATSAPP
+          </button>
+        </div>
+
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-blue-900">
+          <h3 class="text-lg font-bold text-blue-950 mb-4">
+            Histórico de Convocações e Empreitas
+          </h3>
+          <div
+            id="lista-designacoes"
+            class="space-y-2 text-sm divide-y"
+          ></div>
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           ABA PRESENÇAS
+           ===================================================== -->
+      <div id="aba-presencas" class="aba-content hidden space-y-6">
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-blue-900">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-blue-950">
+              Registro Geral de Presenças
+            </h3>
+            <button
+              onclick="carregarPresencas()"
+              class="text-xs bg-blue-100 text-blue-900 px-3 py-1 rounded-lg font-bold hover:bg-blue-200"
+            >
+              Atualizar
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
+                  <th class="p-3 border-b">Data</th>
+                  <th class="p-3 border-b">Funcionário</th>
+                  <th class="p-3 border-b">Obra</th>
+                  <th class="p-3 border-b">GPS / Localização</th>
+                  <th class="p-3 border-b text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody
+                id="tabela-presencas"
+                class="text-sm divide-y"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           ABA COMPROVANTES
+           ===================================================== -->
+      <div id="aba-comprovantes" class="aba-content hidden space-y-6">
+
+        <div class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-orange-500">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-blue-950">
+              Vales, Ressarcimentos and Comprovantes Recebidos
+            </h3>
+            <div class="flex items-center gap-2">
+              <button
+                onclick="exportarComprovantesZip()"
+                class="text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-emerald-700 transition"
+              >
+                📥 Exportar Comprovantes (ZIP)
+              </button>
+              <button
+                onclick="carregarValesAdmin()"
+                class="text-xs bg-orange-100 text-orange-900 px-3 py-1.5 rounded-lg font-bold hover:bg-orange-200"
+              >
+                Atualizar
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="container-vales-admin"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          ></div>
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           ABA FECHAMENTO
+           ===================================================== -->
+      <div id="aba-fechamento" class="aba-content hidden space-y-6">
+
+        <div
+          id="area-impressao-fechamento"
+          class="card-acustico-blur p-6 rounded-2xl shadow-xl border-t-4 border-emerald-600"
+        >
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b pb-4">
+            <div>
+              <h3 class="text-xl font-bold text-blue-950">
+                📊 Fechamento Mensal e Balanço de Diárias / Empreitas
+              </h3>
+              <p class="text-xs text-gray-500">
+                Histórico de pagamentos, vales, ressarcimentos e saldos calculados por período (Empreitas somam apenas se a obra estiver 100% Finalizada)
+              </p>
+            </div>
+
+            <div
+              class="flex flex-wrap items-center gap-2 bg-gray-100 p-2 rounded-xl border"
+              data-html2pdf-ignore="true"
+            >
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-gray-500">
+                  Mês:
+                </label>
+                <select
+                  id="fechamento-mes"
+                  onchange="calcularFechamentoMensal()"
+                  class="p-2 border rounded-lg bg-white text-sm font-semibold focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="0">Janeiro</option>
+                  <option value="1">Fevereiro</option>
+                  <option value="2">Março</option>
+                  <option value="3">Abril</option>
+                  <option value="4">Maio</option>
+                  <option value="5">Junho</option>
+                  <option value="6">Julho</option>
+                  <option value="7">Agosto</option>
+                  <option value="8">Setembro</option>
+                  <option value="9">Outubro</option>
+                  <option value="10">Novembro</option>
+                  <option value="11">Dezembro</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-gray-500">
+                  Ano:
+                </label>
+                <select
+                  id="fechamento-ano"
+                  onchange="calcularFechamentoMensal()"
+                  class="p-2 border rounded-lg bg-white text-sm font-semibold focus:ring-2 focus:ring-emerald-500"
+                ></select>
+              </div>
+
+              <button
+                onclick="calcularFechamentoMensal()"
+                class="mt-3 bg-emerald-600 text-white font-bold px-3 py-2 rounded-lg text-xs hover:bg-emerald-700 transition"
+              >
+                Recalcular
+              </button>
+            </div>
+          </div>
+
+
+          <!-- EXPORTAÇÃO -->
+          <div
+            class="flex flex-wrap gap-2 mb-4 justify-end"
+            data-html2pdf-ignore="true"
+          >
+            <button
+              onclick="exportarExcelFechamento()"
+              class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-xl text-xs shadow flex items-center gap-1.5 transition"
+            >
+              <span>📗</span>
+              Exportar para Excel
+            </button>
+
+            <button
+              onclick="exportarPdfFechamento()"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow flex items-center gap-1.5 transition"
+            >
+              <span>📕</span>
+              Salvar em PDF
+            </button>
+          </div>
+
+
+          <div class="overflow-x-auto">
+            <table
+              id="tabela-fechamento-export"
+              class="w-full text-left border-collapse"
+            >
+              <thead>
+                <tr class="bg-gray-100 text-xs font-bold text-gray-600 uppercase">
+                  <th class="p-3 border-b">Funcionário</th>
+                  <th class="p-3 border-b text-center">Diária / Acordo</th>
+                  <th class="p-3 border-b text-center">Dias / Produção</th>
+                  <th class="p-3 border-b text-right">Total Bruto</th>
+                  <th class="p-3 border-b text-right text-blue-700">Ressarcimentos</th>
+                  <th class="p-3 border-b text-right text-red-600">Total Vales</th>
+                  <th class="p-3 border-b text-right text-emerald-700">Saldo a Pagar</th>
+                </tr>
+              </thead>
+              <tbody
+                id="tabela-fechamento"
+                class="text-sm divide-y"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       JAVASCRIPT COM SUPABASE & REALTIME
+       ========================================================= -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <!-- VISUALIZADOR DE COMPROVANTE -->
+  <div id="modal-comprovante" class="hidden fixed inset-0 z-[9999] bg-black/80 p-4 flex items-center justify-center" aria-hidden="true">
+    <div class="w-full max-w-lg max-h-[92dvh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <div class="flex items-center justify-between gap-3 px-4 py-3 bg-blue-950 text-white">
+        <h3 id="comprovante-titulo" class="font-bold text-sm truncate">Comprovante</h3>
+        <button type="button" onclick="fecharComprovanteVale()" class="text-2xl leading-none px-2" aria-label="Fechar">×</button>
+      </div>
+      <div class="flex-1 min-h-0 overflow-auto bg-gray-100 p-3 flex items-center justify-center">
+        <img id="comprovante-preview" src="" alt="Comprovante" class="max-w-full max-h-[68dvh] object-contain rounded-lg shadow-sm">
+      </div>
+      <div class="p-3 flex gap-2 bg-white border-t">
+        <button type="button" onclick="baixarComprovanteVale()" class="flex-1 bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 rounded-xl">⬇️ Baixar comprovante</button>
+        <button type="button" onclick="fecharComprovanteVale()" class="px-5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    /* =========================================================
+       CONFIGURAÇÃO DO SUPABASE + AUTENTICAÇÃO
+       ========================================================= */
+    // Chaves abaixo são públicas/anon e podem ficar no frontend. NUNCA coloque service_role aqui.
+    const SUPABASE_URL = (window.SUPABASE_URL || 'https://mnpkredhpecgxcusutme.supabase.co').trim();
+    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || 'sb_publishable_84-orAD-0239PwZd0Ue0Yg_4hfTNeG4').trim();
+
+    let supabaseClient = null;
+    let supabaseConfigError = '';
+    let adminAuthenticated = false;
+    let employeeSession = null;
+
+    try {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL === 'SUA_SUPABASE_URL_AQUI' || SUPABASE_ANON_KEY === 'SUA_SUPABASE_ANON_KEY_AQUI') {
+        supabaseConfigError = 'Supabase não configurado. Defina SUPABASE_URL e SUPABASE_ANON_KEY no ambiente do aplicativo.';
+      } else {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+      }
+    } catch (erroConfig) {
+      supabaseConfigError = 'Configuração do Supabase inválida: ' + (erroConfig?.message || erroConfig);
+      console.error(supabaseConfigError, erroConfig);
+    }
+
+    function gerarId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+      return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function garantirSupabase() {
+      if (!supabaseClient) throw new Error(supabaseConfigError || 'Supabase não está configurado.');
+      return supabaseClient;
+    }
+
+    async function garantirAdmin() {
+      const client = garantirSupabase();
+      const { data: { session } } = await client.auth.getSession();
+      if (!session) { adminAuthenticated = false; throw new Error('Faça login como administrador.'); }
+      const { data, error } = await client.rpc('get_my_role');
+      if (error || data !== 'admin') {
+        await client.auth.signOut();
+        adminAuthenticated = false;
+        throw new Error('Sua conta não possui permissão de administrador.');
+      }
+      adminAuthenticated = true;
+      return session;
+    }
+
+    async function autenticarFuncionario(funcId, pin) {
+      const client = garantirSupabase();
+      const { data, error } = await client.rpc('employee_login', {
+        p_funcionario_id: funcId,
+        p_pin: pin
+      });
+      if (error) throw error;
+      if (!data?.ok) return false;
+      employeeSession = data;
+      sessionStorage.setItem('tre_employee_session', JSON.stringify(data));
+      return true;
+    }
+
+    function obterSessaoFuncionario() {
+      if (employeeSession?.token) return employeeSession;
+      try {
+        const raw = sessionStorage.getItem('tre_employee_session');
+        if (raw) employeeSession = JSON.parse(raw);
+      } catch (_) {}
+      return employeeSession;
+    }
+
+    async function validarPin(funcId, pinDigitado) {
+      try { return await autenticarFuncionario(funcId, pinDigitado); }
+      catch (e) { console.error('Falha na autenticação do funcionário:', e); return false; }
+    }
+
+    async function sairFuncionario() {
+      employeeSession = null;
+      sessionStorage.removeItem('tre_employee_session');
+    }
+
+    /* =========================================================
+       SISTEMA DE SOM TEMÁTICO
+       ========================================================= */
+    let audioCtx = null;
+
+    function tocarSomConstrucao(tipo = 'clique') {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const agora = audioCtx.currentTime;
+
+        if (tipo === 'sair' || tipo === 'voltar') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, agora);
+          osc.frequency.exponentialRampToValueAtTime(50, agora + 0.15);
+          gain.gain.setValueAtTime(0.15, agora);
+          gain.gain.linearRampToValueAtTime(0.01, agora + 0.15);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(agora);
+          osc.stop(agora + 0.15);
+        } else if (tipo === 'confirmar' || tipo === 'entrar') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(320, agora);
+          osc.frequency.exponentialRampToValueAtTime(640, agora + 0.08);
+          gain.gain.setValueAtTime(0.2, agora);
+          gain.gain.linearRampToValueAtTime(0.01, agora + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(agora);
+          osc.stop(agora + 0.12);
+        } else {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(400, agora);
+          osc.frequency.exponentialRampToValueAtTime(150, agora + 0.05);
+          gain.gain.setValueAtTime(0.1, agora);
+          gain.gain.linearRampToValueAtTime(0.01, agora + 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(agora);
+          osc.stop(agora + 0.05);
+        }
+      } catch (e) {
+        console.log("Áudio bloqueado.", e);
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+      const botao = event.target.closest('button');
+      if (!botao) return;
+
+      const texto = (botao.innerText || "").toLowerCase();
+
+      if (texto.includes('sair') || texto.includes('fechar') || texto.includes('✕') || texto.includes('remover') || texto.includes('excluir')) {
+        tocarSomConstrucao('sair');
+      } else if (texto.includes('confirmar') || texto.includes('entrar') || texto.includes('bater ponto') || texto.includes('salvar') || texto.includes('cadastrar') || texto.includes('enviar') || texto.includes('designar')) {
+        tocarSomConstrucao('confirmar');
+      } else {
+        tocarSomConstrucao('clique');
+      }
+    });
+
+
+    /* =========================================================
+       ESTADOS DO APLICATIVO (ONLINE)
+       ========================================================= */
+
+    let obras = [];
+    let equipe = [];
+    let pontos = [];
+    let vales = [];
+    let fotosObra = [];
+    let pdfsObra = [];
+    let designacoes = [];
+    let filtroStatusAtual = 'Em Andamento';
+
+
+    /* =========================================================
+       CARREGAR DADOS DO SUPABASE
+       ========================================================= */
+
+    async function carregarDadosDoSupabase() {
+      await garantirAdmin();
+      const client = garantirSupabase();
+      const consultas = {
+        obras: () => client.from('obras').select('*'),
+        equipe: () => client.from('equipe').select('*'),
+        pontos: () => client.from('pontos').select('*'),
+        vales: () => client.from('vales').select('*'),
+        fotos_obra: () => client.from('fotos_obra').select('*'),
+        pdfs_obra: () => client.from('pdfs_obra').select('*'),
+        designacoes: () => client.from('designacoes').select('*')
+      };
+      const entries = Object.entries(consultas);
+      const settled = await Promise.all(entries.map(async ([nome, fn]) => {
+        try {
+          const result = await fn();
+          return [nome, result];
+        } catch (error) {
+          return [nome, { data: null, error }];
+        }
+      }));
+
+      const falhas = [];
+      for (const [nome, result] of settled) {
+        if (result.error) {
+          falhas.push(`${nome}: ${result.error.message || result.error}`);
+          continue;
+        }
+        const data = Array.isArray(result.data) ? result.data : [];
+        if (nome === 'obras') obras = data;
+        if (nome === 'equipe') equipe = data;
+        if (nome === 'pontos') pontos = data;
+        if (nome === 'vales') vales = data;
+        if (nome === 'fotos_obra') fotosObra = data;
+        if (nome === 'pdfs_obra') pdfsObra = data;
+        if (nome === 'designacoes') designacoes = data;
+      }
+
+      const porDataCriacaoDesc = (a, b) =>
+        String(b?.created_at || '').localeCompare(String(a?.created_at || ''));
+      equipe.sort((a, b) => String(a?.nome || '').localeCompare(String(b?.nome || ''), 'pt-BR'));
+      pontos.sort(porDataCriacaoDesc);
+      vales.sort(porDataCriacaoDesc);
+      fotosObra.sort(porDataCriacaoDesc);
+      pdfsObra.sort(porDataCriacaoDesc);
+      designacoes.sort(porDataCriacaoDesc);
+
+      populardropdowns();
+      carregarHistoricoPontosFuncionario();
+      renderizarObras();
+      renderizarPainelPendencias();
+      renderizarCronograma();
+      renderizarEquipe();
+      renderizarDesignacoes();
+      carregarPresencas();
+      carregarValesAdmin();
+
+      // Mantém o fechamento mensal sincronizado com os dados recém-lidos do Supabase.
+      // Evita que a aba continue mostrando totais antigos/zerados após atualizar registros.
+      const abaFechamento = document.getElementById('aba-fechamento');
+      if (abaFechamento && !abaFechamento.classList.contains('hidden')) {
+        calcularFechamentoMensal();
+      }
+
+      if (falhas.length) {
+        console.error('Algumas tabelas não puderam ser carregadas:', falhas);
+        // Do not wipe successful data. Keep the UI usable and make the exact failing table visible in the console.
+      }
+    }
+
+
+    /* =========================================================
+       CONFIGURAR REALTIME (SINCRONIZAÇÃO EM TEMPO REAL)
+       ========================================================= */
+
+    let realtimeChannel = null;
+    let realtimeReloadTimer = null;
+    let realtimeReloadRunning = false;
+
+    function agendarSincronizacaoRealtime() {
+      clearTimeout(realtimeReloadTimer);
+      realtimeReloadTimer = setTimeout(async () => {
+        if (realtimeReloadRunning || !adminAuthenticated) return;
+        realtimeReloadRunning = true;
+        try { await carregarDadosDoSupabase(); }
+        catch (e) { console.error('Falha na sincronização Realtime:', e); }
+        finally { realtimeReloadRunning = false; }
+      }, 350);
+    }
+
+    function configurarRealtimeSupabase() {
+      if (!supabaseClient || !adminAuthenticated) return;
+      try {
+        if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
+      } catch (_) {}
+      realtimeChannel = supabaseClient
+        .channel('tre-admin-db-changes-v5')
+        .on('postgres_changes', { event: '*', schema: 'public' }, agendarSincronizacaoRealtime)
+        .subscribe((status, erro) => {
+          if (erro) console.error('Erro no Realtime:', erro);
+          console.log('Realtime status:', status);
+        });
+    }
+
+
+    /* =========================================================
+       COMPRESSÃO DE IMAGENS
+       ========================================================= */
+
+    function comprimirImagem(file, maxLargura = 1000, qualidade = 0.7) {
+      return new Promise((resolve, reject) => {
+        if (!file) { resolve(null); return; }
+        if (file.type.startsWith('video/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Erro ao ler vídeo.'));
+          reader.readAsDataURL(file);
+          return;
+        }
+        if (!file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = () => reject(new Error('Erro ao ler arquivo.'));
+          reader.readAsDataURL(file);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let largura = img.width;
+            let altura = img.height;
+            if (largura > maxLargura) {
+              altura = Math.round((altura * maxLargura) / largura);
+              largura = maxLargura;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = largura;
+            canvas.height = altura;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) { resolve(e.target.result); return; }
+            ctx.drawImage(img, 0, 0, largura, altura);
+            resolve(canvas.toDataURL('image/jpeg', qualidade));
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Erro ao ler imagem.'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+
+    /* =========================================================
+       GPS
+       ========================================================= */
+
+    function obterCoordenadasGPS() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          alert("Geolocalização não é suportada pelo seu navegador.");
+          resolve(null);
+          return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          },
+          (err) => {
+            console.warn("Erro ao obter GPS:", err.message);
+            navigator.geolocation.getCurrentPosition(
+              (pos2) => resolve({ lat: pos2.coords.latitude, lng: pos2.coords.longitude }),
+              () => {
+                alert("⚠️ Não foi possível obter sua localização exata. O ponto será registrado sem GPS.");
+                resolve(null);
+              },
+              { timeout: 10000, enableHighAccuracy: false, maximumAge: 60000 }
+            );
+          },
+          { timeout: 12000, enableHighAccuracy: true, maximumAge: 0 }
+        );
+      });
+    }
+
+
+    /* =========================================================
+       INICIALIZAÇÃO
+       ========================================================= */
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') fecharLoginAdmin();
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const hoje = new Date().toISOString().split('T')[0];
+      if (document.getElementById('ponto-data')) document.getElementById('ponto-data').value = hoje;
+      if (document.getElementById('vale-data')) document.getElementById('vale-data').value = hoje;
+      if (document.getElementById('designar-data')) document.getElementById('designar-data').value = hoje;
+
+      const anoSelect = document.getElementById('fechamento-ano');
+      const anoAtual = new Date().getFullYear();
+      if (anoSelect) {
+        for (let ano = anoAtual - 2; ano <= anoAtual + 3; ano++) {
+          const option = document.createElement('option');
+          option.value = ano;
+          option.textContent = ano;
+          if (ano === anoAtual) option.selected = true;
+          anoSelect.appendChild(option);
+        }
+      }
+
+      const mesSelect = document.getElementById('fechamento-mes');
+      if (mesSelect) mesSelect.value = new Date().getMonth();
+
+      if (!supabaseClient) {
+        console.warn(supabaseConfigError);
+      } else {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session) {
+            const { data: role } = await supabaseClient.rpc('get_my_role');
+            adminAuthenticated = role === 'admin';
+            if (adminAuthenticated) {
+              await carregarDadosDoSupabase();
+              configurarRealtimeSupabase();
+              mostrarVisao('admin');
+            }
+          }
+        } catch (e) { console.warn('Sessão não restaurada:', e); }
+        await carregarDadosPublicosFuncionario();
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+          adminAuthenticated = !!session && event !== 'SIGNED_OUT';
+        });
+      }
+
+      alternarCamposDesignacao();
+    });
+
+
+    async function carregarDadosPublicosFuncionario() {
+      try {
+        const client = garantirSupabase();
+        const [funcRes, obraRes] = await Promise.all([
+          client.rpc('employee_directory'),
+          client.rpc('employee_obras')
+        ]);
+        if (funcRes.error) throw funcRes.error;
+        if (obraRes.error) throw obraRes.error;
+        equipe = funcRes.data || [];
+        obras = obraRes.data || [];
+        populardropdowns();
+      } catch (e) {
+        console.warn('Dados públicos do acesso funcionário indisponíveis:', e);
+      }
+    }
+
+    /* =========================================================
+       DROPDOWNS
+       ========================================================= */
+
+    function populardropdowns() {
+      const funcSelects = [
+        'ponto-funcionario',
+        'vale-funcionario',
+        'foto-funcionario',
+        'modal-whatsapp-funcionario',
+        'designar-funcionario',
+        'func-status-responsavel'
+      ];
+
+      const funcionariosAtivos = equipe.filter(e => e.ativo !== false);
+
+      funcSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = '<option value="">Selecione o Funcionário...</option>';
+        funcionariosAtivos.forEach(f => {
+          const zapInfo = f.whatsapp ? ` (${f.whatsapp})` : '';
+          el.innerHTML += `<option value="${f.id}">${f.nome}${zapInfo}</option>`;
+        });
+      });
+
+      const consultaInfo = document.getElementById('consulta-info-obra');
+      if (consultaInfo) {
+        const valorAnterior = consultaInfo.value;
+        consultaInfo.innerHTML = '<option value="">Selecione a Obra...</option>';
+        // A consulta mostra obras não finalizadas, sem alterar a lista/permissão do ponto.
+        obras.filter(o => (o.status || 'Em Andamento') !== 'Finalizada').forEach(o => {
+          const option = document.createElement('option');
+          option.value = o.id;
+          option.textContent = `${o.nome || 'Obra sem nome'}${o.local ? ' — ' + o.local : ''}`;
+          consultaInfo.appendChild(option);
+        });
+        if ([...consultaInfo.options].some(op => op.value === valorAnterior)) consultaInfo.value = valorAnterior;
+        mostrarInformacoesObraFuncionario();
+      }
+
+      const obraSelects = [
+        'ponto-obra',
+        'consulta-pdf-obra',
+        'vale-obra',
+        'foto-obra',
+        'designar-obra',
+        'func-status-obra'
+      ];
+
+      obraSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = '<option value="">Selecione a Obra...</option>';
+        // Funcionário só pode selecionar obras em andamento ou prontas.
+        // As abas administrativas continuam podendo consultar todas as obras.
+        const idsFuncionario = ['ponto-obra', 'vale-obra', 'foto-obra'];
+        const obrasDisponiveis = idsFuncionario.includes(id)
+          ? obras.filter(o => (o.status || 'Em Andamento') !== 'Finalizada')
+          : obras;
+        obrasDisponiveis.forEach(o => {
+          const statusTxt = o.status ? ` [${o.status}]` : '';
+          el.innerHTML += `<option value="${o.id}">${o.nome} (${o.local})${statusTxt}</option>`;
+        });
+      });
+    }
+
+
+    function escaparTextoObra(valor) {
+      return String(valor ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function mostrarInformacoesObraFuncionario() {
+      const select = document.getElementById('consulta-info-obra');
+      const box = document.getElementById('consulta-info-obra-detalhes');
+      if (!select || !box) return;
+      const obra = obras.find(o => String(o.id) === String(select.value));
+      if (!obra) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+
+      // Aceita os nomes de coluna usados por versões diferentes do banco.
+      const complemento = obra.componente ?? obra.complemento ?? obra.andar_complemento ?? obra.andar;
+      const representante = obra.representante ?? obra.engenheiro ?? obra.mestre;
+      const observacoes = obra.observacoes ?? obra.observacao ?? obra.observacoes_obra ?? obra.instrucoes;
+      const numero = obra.numero ?? obra.numero_obra;
+      const endereco = obra.local ?? obra.endereco ?? obra.localizacao;
+      const linha = (rotulo, valor) => `<p><strong>${rotulo}:</strong> ${valor !== null && valor !== undefined && String(valor).trim() !== '' ? escaparTextoObra(valor).replace(/\n/g, '<br>') : '<span class="text-gray-500">Não informado</span>'}</p>`;
+      const enderecoTexto = endereco !== null && endereco !== undefined ? String(endereco).trim() : '';
+      // O patrão pode digitar um endereço normal OU colar um link compartilhado do Google Maps.
+      // Se já for um link do Maps, abrimos esse link diretamente; caso contrário, pesquisamos o endereço.
+      const ehLinkGoogleMaps = /^(https?:\/\/)?(www\.)?(google\.[^/]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(enderecoTexto);
+      const urlMaps = enderecoTexto
+        ? (ehLinkGoogleMaps
+            ? ( /^https?:\/\//i.test(enderecoTexto) ? enderecoTexto : `https://${enderecoTexto}` )
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoTexto)}`)
+        : '';
+      const linkMaps = enderecoTexto
+        ? `<a href="${escaparTextoObra(urlMaps)}" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 mt-2 px-4 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-md transition"><span aria-hidden="true">📍</span> ABRIR ROTA NO GOOGLE MAPS <span aria-hidden="true">↗</span></a>`
+        : '';
+      const enderecoLinha = enderecoTexto
+        ? `<p><strong>Endereço / Localização:</strong> <a class="text-blue-700 underline font-semibold break-words" href="${escaparTextoObra(urlMaps)}" target="_blank" rel="noopener noreferrer">${escaparTextoObra(enderecoTexto)}</a></p>`
+        : linha('Endereço / Localização', endereco);
+      box.innerHTML = `<h4 class="font-bold text-emerald-900 text-base">🏗️ ${escaparTextoObra(obra.nome || 'Obra')}</h4>
+        ${linha('Número da obra', numero || obra.nome)}
+        ${linha('Status', obra.status || 'Em Andamento')}
+        ${enderecoLinha}
+        ${linkMaps}
+        ${linha('Complemento / Andar', complemento)}
+        ${linha('Engenheiro / Representante', representante)}
+        ${linha('Observações / Instruções', observacoes)}`;
+      box.classList.remove('hidden');
+    }
+
+    /* =========================================================
+       ATUALIZAR STATUS DA OBRA
+       ========================================================= */
+
+    async function atualizarStatusObraPeloFuncionario() {
+      const obraId = document.getElementById('func-status-obra').value;
+      const situacao = document.getElementById('func-status-situacao').value;
+      const funcId = document.getElementById('func-status-responsavel').value;
+      const pin = document.getElementById('func-status-pin').value;
+
+      if (!obraId || !situacao || !funcId || !pin) {
+        alert("Preencha todos os campos e informe seu PIN!");
+        return;
+      }
+
+      if (!(await validarPin(funcId, pin))) {
+        alert("PIN incorreto!");
+        return;
+      }
+
+      const func = equipe.find(f => f.id === funcId);
+      if (!func) {
+        alert("Colaborador não encontrado.");
+        return;
+      }
+
+      const sess = obterSessaoFuncionario();
+      if (!sess?.token) { alert('Sessão do funcionário expirada. Informe o PIN novamente.'); return; }
+      const { data: resultado, error } = await supabaseClient.rpc('employee_update_obra_status', {
+        p_session_token: sess.token, p_funcionario_id: funcId, p_obra_id: obraId, p_status: situacao
+      });
+      if (error || !resultado?.ok) {
+        alert('Erro ao atualizar status: ' + (error?.message || resultado?.message || 'Operação não autorizada.'));
+        return;
+      }
+
+      alert(`✅ Status da obra atualizado com sucesso para: "${situacao}" por ${func.nome}!`);
+      document.getElementById('func-status-pin').value = '';
+      carregarDadosDoSupabase();
+    }
+
+
+    /* =========================================================
+       TROCAR VISÃO
+       ========================================================= */
+
+    function mostrarVisao(visao) {
+      document.getElementById('pantalla-login').classList.add('hidden');
+      if (visao === 'funcionario') {
+        document.getElementById('visao-funcionario').classList.remove('hidden');
+        carregarHistoricoPontosFuncionario();
+      } else if (visao === 'admin') {
+        if (!adminAuthenticated) {
+          alert('Sessão administrativa não autenticada.');
+          document.getElementById('pantalla-login').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('visao-admin').classList.remove('hidden');
+        mudarAbaAdmin('obras');
+      }
+    }
+
+    async function entrarComoFuncionario() {
+      try {
+        await carregarDadosPublicosFuncionario();
+        mostrarVisao('funcionario');
+      } catch (e) { alert('Não foi possível abrir o acesso do funcionário.'); }
+    }
+
+    /* =========================================================
+       LOGIN ADMINISTRADOR — SUPABASE AUTH
+       ========================================================= */
+    function solicitarSenhaAdmin() {
+      const modal = document.getElementById('modal-login-admin');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      const erro = document.getElementById('login-admin-erro');
+      if (erro) { erro.textContent = ''; erro.classList.add('hidden'); }
+      setTimeout(() => document.getElementById('login-admin-email')?.focus(), 50);
+    }
+
+    function fecharLoginAdmin() {
+      const modal = document.getElementById('modal-login-admin');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    async function confirmarLoginAdmin() {
+      const btn = document.getElementById('btn-login-admin');
+      const erro = document.getElementById('login-admin-erro');
+      const email = document.getElementById('login-admin-email')?.value?.trim() || '';
+      const senha = document.getElementById('login-admin-senha')?.value || '';
+      if (!email || !senha) return;
+      try {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Autenticando...</span><span class="tre-spinner"></span>';
+        erro?.classList.add('hidden');
+        const client = garantirSupabase();
+        const { error } = await client.auth.signInWithPassword({ email, password: senha });
+        if (error) throw error;
+        await garantirAdmin();
+        await carregarDadosDoSupabase();
+        configurarRealtimeSupabase();
+        fecharLoginAdmin();
+        mostrarVisao('admin');
+        tocarSomConstrucao('entrar');
+        const senhaEl = document.getElementById('login-admin-senha');
+        if (senhaEl) senhaEl.value = '';
+      } catch (e) {
+        console.error(e);
+        if (erro) {
+          erro.textContent = 'Não foi possível entrar. Verifique seu e-mail, senha e permissão de administrador.';
+          erro.classList.remove('hidden');
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Entrar no painel</span><span>→</span>';
+      }
+    }
+
+    async function sair() {
+      try {
+        if (supabaseClient) await supabaseClient.auth.signOut();
+      } catch (e) { console.warn(e); }
+      await sairFuncionario();
+      adminAuthenticated = false;
+      document.getElementById('visao-funcionario').classList.add('hidden');
+      document.getElementById('visao-admin').classList.add('hidden');
+      document.getElementById('pantalla-login').classList.remove('hidden');
+    }
+
+
+    /* =========================================================
+       ABAS ADMIN
+       ========================================================= */
+
+    function mudarAbaAdmin(aba) {
+      document.querySelectorAll('.aba-content').forEach(el => el.classList.add('hidden'));
+      const abaElement = document.getElementById(`aba-${aba}`);
+      if (abaElement) abaElement.classList.remove('hidden');
+
+      const abas = ['obras', 'pendencias', 'cronograma', 'equipe', 'designar', 'presencas', 'comprovantes', 'fechamento'];
+      abas.forEach(a => {
+        const btn = document.getElementById(`tab-btn-${a}`);
+        if (!btn) return;
+        btn.className = (a === aba)
+          ? "px-5 py-3 hover:bg-blue-800 border-b-2 border-orange-500 text-orange-400 font-bold transition flex items-center gap-1.5"
+          : "px-5 py-3 hover:bg-blue-800 border-b-2 border-transparent hover:border-orange-500 transition flex items-center gap-1.5";
+      });
+
+      if (aba === 'obras') renderizarObras();
+      if (aba === 'pendencias') renderizarPainelPendencias();
+      if (aba === 'cronograma') renderizarCronograma();
+      if (aba === 'equipe') renderizarEquipe();
+      if (aba === 'designar') renderizarDesignacoes();
+      if (aba === 'presencas') carregarPresencas();
+      if (aba === 'comprovantes') carregarValesAdmin();
+      if (aba === 'fechamento') calcularFechamentoMensal();
+    }
+
+
+    /* =========================================================
+       REGISTRAR PONTO
+       ========================================================= */
+
+    async function registrarPonto() {
+      const btn = document.getElementById('btn-ponto');
+      const funcId = document.getElementById('ponto-funcionario').value;
+      const obraId = document.getElementById('ponto-obra').value;
+      const dataPonto = document.getElementById('ponto-data').value;
+      const pin = document.getElementById('ponto-pin').value;
+
+      if (!funcId || !obraId || !dataPonto || !pin) {
+        alert("Preencha todos os campos do ponto!");
+        return;
+      }
+
+      if (!(await validarPin(funcId, pin))) {
+        alert("PIN incorreto!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "🌐 OBTENDO GPS E REGISTRANDO...";
+
+      try {
+        const coords = await obterCoordenadasGPS();
+        const novoPonto = {
+          id: gerarId(),
+          funcionario_id: funcId,
+          obra_id: obraId,
+          data: dataPonto,
+          hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          gps: coords
+        };
+
+        const sess = obterSessaoFuncionario();
+        if (!sess?.token) throw new Error('Sessão do funcionário expirada. Informe o PIN novamente.');
+        const { data: resultadoPonto, error: erroPonto } = await supabaseClient.rpc('employee_register_point', {
+          p_session_token: sess.token, p_funcionario_id: funcId, p_obra_id: obraId,
+          p_data: dataPonto, p_hora: novoPonto.hora, p_gps: coords
+        });
+        if (erroPonto) throw erroPonto;
+        if (!resultadoPonto?.ok) throw new Error(resultadoPonto?.message || 'Não foi possível registrar o ponto.');
+
+        alert("📍 Ponto e geolocalização registrados com sucesso!");
+        document.getElementById('ponto-pin').value = '';
+        carregarDadosDoSupabase();
+      } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível registrar o ponto.");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "📍 BATER PONTO HOJE";
+    }
+
+
+    /* =========================================================
+       HISTÓRICO PONTOS
+       ========================================================= */
+
+    async function carregarHistoricoPontosFuncionario() {
+      const container = document.getElementById('lista-ponto-recentes');
+      if (!container) return;
+      const sess = obterSessaoFuncionario();
+      if (!sess?.token) {
+        container.innerHTML = '<p class="text-xs text-gray-500 py-2">Informe o PIN ao registrar uma operação para consultar seu histórico.</p>';
+        return;
+      }
+      try {
+        const { data, error } = await garantirSupabase().rpc('employee_get_history', { p_session_token: sess.token });
+        if (error) throw error;
+        const ultimosPontos = data || [];
+        if (!ultimosPontos.length) {
+          container.innerHTML = '<p class="text-xs text-gray-500 py-2">Nenhum ponto registrado ainda.</p>';
+          return;
+        }
+        container.innerHTML = ultimosPontos.slice(0, 5).map(p => `
+          <div class="py-2 flex justify-between items-center">
+            <div><p class="font-bold text-blue-950">${p.funcionario_nome || 'Colaborador'}</p>
+            <p class="text-xs text-gray-500">Obra: ${p.obra_nome || 'Desconhecida'}</p></div>
+            <div class="text-right"><span class="text-xs font-semibold bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full">${p.data}</span></div>
+          </div>`).join('');
+      } catch (e) {
+        console.warn('Histórico protegido:', e);
+        container.innerHTML = '<p class="text-xs text-gray-500 py-2">Faça uma autenticação de funcionário para visualizar o histórico.</p>';
+      }
+    }
+
+    /* =========================================================
+       REGISTRAR VALE
+       ========================================================= */
+
+    async function registrarVale() {
+      const btn = document.getElementById('btn-vale');
+      const tipoLancamento = document.getElementById('vale-tipo-lacamento').value;
+      const funcId = document.getElementById('vale-funcionario').value;
+      const obraId = document.getElementById('vale-obra').value;
+      const valor = parseFloat(document.getElementById('vale-valor').value);
+      const data = document.getElementById('vale-data').value;
+      const descricao = document.getElementById('vale-descricao').value;
+      const pin = document.getElementById('vale-pin').value;
+      const fileInput = document.getElementById('vale-comprovante-file');
+
+      if (!funcId || !obraId || !data || !pin || !Number.isFinite(valor) || valor <= 0) {
+        alert("Preencha todos os campos obrigatórios e informe um valor válido!");
+        return;
+      }
+
+      if (!(await validarPin(funcId, pin))) {
+        alert("PIN incorreto!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ ENVIANDO...";
+
+      try {
+        let fotoDataUrl = null;
+        if (fileInput.files && fileInput.files[0]) {
+          fotoDataUrl = await comprimirImagem(fileInput.files[0]);
+        }
+
+        const novoVale = {
+          id: gerarId(),
+          tipo: tipoLancamento || 'Vale',
+          funcionario_id: funcId,
+          obra_id: obraId,
+          valor: valor,
+          data: data,
+          descricao: descricao,
+          comprovante: fotoDataUrl
+        };
+
+        const sess = obterSessaoFuncionario();
+        if (!sess?.token) throw new Error('Sessão do funcionário expirada. Informe o PIN novamente.');
+        const { data: resultado, error } = await supabaseClient.rpc('employee_register_vale', {
+          p_session_token: sess.token, p_funcionario_id: funcId, p_obra_id: obraId,
+          p_tipo: novoVale.tipo, p_valor: valor, p_data: data, p_descricao: descricao, p_comprovante: fotoDataUrl
+        });
+        if (error) throw error;
+        if (!resultado?.ok) throw new Error(resultado?.message || 'Não foi possível registrar o lançamento.');
+
+        alert(`💸 ${tipoLancamento}/Comprovante enviado com sucesso!`);
+        document.getElementById('vale-valor').value = '';
+        document.getElementById('vale-descricao').value = '';
+        document.getElementById('vale-pin').value = '';
+        document.getElementById('vale-comprovante-file').value = '';
+        carregarDadosDoSupabase();
+      } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível enviar o lançamento.");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "💸 ENVIAR VALE / RESSARCIMENTO";
+    }
+
+
+    /* =========================================================
+       ENVIAR FOTO / VÍDEO
+       ========================================================= */
+
+    async function enviarFotoObra() {
+      const btn = document.getElementById('btn-foto');
+      const funcId = document.getElementById('foto-funcionario').value;
+      const obraId = document.getElementById('foto-obra').value;
+      const tipo = document.getElementById('foto-tipo').value;
+      const observacao = document.getElementById('foto-observacao').value;
+      const pin = document.getElementById('foto-pin').value;
+      const fileInput = document.getElementById('foto-file');
+
+      if (!funcId || !obraId || !pin || !fileInput.files || fileInput.files.length === 0) {
+        alert("Selecione o funcionário, a obra, informe o PIN e escolha os arquivos!");
+        return;
+      }
+
+      if (!(await validarPin(funcId, pin))) {
+        alert("PIN incorreto!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ PROCESSANDO E ENVIANDO...";
+
+      try {
+        const files = Array.from(fileInput.files);
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const isVideo = file.type.startsWith('video/');
+          const arquivoProcessado = await comprimirImagem(file);
+
+          const novaFoto = {
+            id: gerarId(),
+            funcionario_id: funcId,
+            obra_id: obraId,
+            tipo: tipo,
+            observacao: observacao,
+            imagem: arquivoProcessado,
+            is_video: isVideo,
+            data: new Date().toLocaleDateString('pt-BR'),
+            file_name: file.name
+          };
+
+          const sess = obterSessaoFuncionario();
+          if (!sess?.token) throw new Error('Sessão do funcionário expirada. Informe o PIN novamente.');
+          const { data: resultadoFoto, error: erroFoto } = await garantirSupabase().rpc('employee_upload_photo', {
+            p_session_token: sess.token, p_funcionario_id: funcId, p_obra_id: obraId,
+            p_tipo: tipo, p_observacao: observacao, p_imagem: arquivoProcessado,
+            p_is_video: isVideo, p_data: new Date().toLocaleDateString('pt-BR'), p_file_name: file.name
+          });
+          if (erroFoto) throw erroFoto;
+          if (!resultadoFoto?.ok) throw new Error(resultadoFoto?.message || 'Falha ao enviar arquivo.');
+        }
+
+        alert(`📸 ${files.length} arquivo(s) enviado(s) com sucesso!`);
+        document.getElementById('foto-observacao').value = '';
+        document.getElementById('foto-pin').value = '';
+        document.getElementById('foto-file').value = '';
+        carregarDadosDoSupabase();
+      } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível processar os arquivos.");
+      }
+
+      btn.disabled = false;
+      btn.innerText = "📤 ENVIAR PARA A GALERIA DA OBRA";
+    }
+
+
+    /* =========================================================
+       BUSCAR PDF
+       ========================================================= */
+
+    async function buscarPdfsObra() {
+      const obraId = document.getElementById('consulta-pdf-obra').value;
+      const container = document.getElementById('container-pdf-obra');
+
+      if (!obraId) {
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Selecione uma obra acima.</p>';
+        return;
+      }
+
+      let pdfs = pdfsObra.filter(p => p.obra_id === obraId);
+      if (!adminAuthenticated) {
+        const sess = obterSessaoFuncionario();
+        if (!sess?.token) { container.innerHTML = '<p class="text-xs text-orange-600 bg-orange-50 p-3 rounded-xl border border-orange-200">Autentique o funcionário pelo PIN para consultar os PDFs.</p>'; return; }
+        const { data, error } = await garantirSupabase().rpc('employee_list_pdfs', { p_session_token: sess.token, p_obra_id: obraId });
+        if (error) { container.innerHTML = '<p class="text-xs text-red-600">Não foi possível consultar os PDFs.</p>'; return; }
+        pdfs = data || [];
+      }
+
+      if (pdfs.length === 0) {
+        container.innerHTML = '<p class="text-xs text-orange-600 bg-orange-50 p-3 rounded-xl border border-orange-200">Nenhum PDF anexado a esta obra.</p>';
+        return;
+      }
+
+      container.innerHTML = pdfs.map(pdf => `
+        <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 flex items-center justify-between">
+          <div>
+            <p class="font-bold text-sm text-purple-950">📄 ${pdf.titulo || 'Projeto da Obra'}</p>
+            <p class="text-xs text-purple-700">Adicionado em: ${pdf.data}</p>
+          </div>
+          <a href="${pdf.url}" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">Abrir PDF ↗</a>
+        </div>
+      `).join('');
+    }
+
+
+    /* =========================================================
+       CADASTRAR OBRA
+       ========================================================= */
+
+    async function cadastrarObra() {
+      await garantirAdmin();
+      const nome = document.getElementById('obra-nome').value.trim();
+      const local = document.getElementById('obra-local').value.trim();
+      const componente = document.getElementById('obra-componente').value.trim();
+      const representante = document.getElementById('obra-representante').value.trim();
+      const observacoes = document.getElementById('obra-observacoes').value.trim();
+
+      if (!nome || !local) {
+        alert("Preencha o nome/número e o local da obra!");
+        return;
+      }
+
+      const novaObra = {
+        id: gerarId(),
+        nome: nome,
+        local: local,
+        componente: componente,
+        representante: representante,
+        observacoes: observacoes,
+        status: 'Em Andamento',
+        inicio_em: (() => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); })(),
+        atualizado_por: 'Patrão'
+      };
+
+      const { error } = await supabaseClient.from('obras').insert([novaObra]);
+      if (error) {
+        alert("Erro ao cadastrar obra: " + error.message);
+        return;
+      }
+
+      document.getElementById('obra-nome').value = '';
+      document.getElementById('obra-local').value = '';
+      document.getElementById('obra-componente').value = '';
+      document.getElementById('obra-representante').value = '';
+      document.getElementById('obra-observacoes').value = '';
+      carregarDadosDoSupabase();
+    }
+
+
+    /* =========================================================
+       RENDER OBRAS & FILTROS POR STATUS
+       ========================================================= */
+
+    function filtrarObrasPatrao(status) {
+      filtroStatusAtual = status;
+      ['andamento', 'pronta', 'finalizada', 'todas'].forEach(s => {
+        const btn = document.getElementById(`filtro-${s}`);
+        if (!btn) return;
+        const statusBotao = s === 'andamento' ? 'Em Andamento' : s === 'pronta' ? 'Pronta' : s === 'finalizada' ? 'Finalizada' : 'todas';
+        if (statusBotao.toLowerCase() === String(status).toLowerCase()) {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-950 text-white transition";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-200 text-gray-700 transition";
+        }
+      });
+      renderizarObras();
+    }
+
+    function formatarDataObra(valor) {
+      if (!valor) return '';
+      const texto = String(valor).slice(0, 10);
+      const partes = texto.split('-');
+      if (partes.length !== 3) return texto;
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function abrirModalDetalhesObra(id) {
+      const obra = obras.find(o => String(o.id) === String(id));
+      if (!obra) { alert('Obra não encontrada.'); return; }
+      const status = obra.status || 'Em Andamento';
+      const inicio = obra.inicio_em || (obra.created_at ? String(obra.created_at).slice(0, 10) : null);
+      const termino = obra.finalizada_em || null;
+      document.getElementById('modal-datas-obra-id').value = obra.id;
+      document.getElementById('modal-datas-obra-inicio').value = obra.inicio_em || (obra.created_at ? String(obra.created_at).slice(0, 10) : '');
+      document.getElementById('modal-datas-obra-termino').value = termino || '';
+      document.getElementById('modal-detalhes-obra-titulo').textContent = obra.nome || 'Obra';
+      document.getElementById('modal-detalhes-obra-status').textContent = `Status: ${status}`;
+      document.getElementById('modal-detalhes-obra-inicio').textContent = inicio ? formatarDataObra(inicio) : 'Data não registrada';
+      const blocoTermino = document.getElementById('bloco-data-termino-obra');
+      const aviso = document.getElementById('modal-detalhes-obra-aviso');
+      if (status === 'Finalizada') {
+        blocoTermino.classList.remove('hidden');
+        document.getElementById('modal-detalhes-obra-termino').textContent = termino ? formatarDataObra(termino) : 'Data não registrada';
+        aviso.textContent = '';
+      } else {
+        blocoTermino.classList.add('hidden');
+        aviso.textContent = 'A data de término aparecerá aqui quando a obra for marcada como finalizada.';
+      }
+      document.getElementById('modal-detalhes-obra').classList.remove('hidden');
+    }
+
+    async function salvarDatasObra() {
+      const id = document.getElementById('modal-datas-obra-id').value;
+      const inicio = document.getElementById('modal-datas-obra-inicio').value || null;
+      const termino = document.getElementById('modal-datas-obra-termino').value || null;
+      const btn = document.getElementById('btn-salvar-datas-obra');
+      if (!id) return alert('Não encontrei a obra selecionada.');
+      if (inicio && termino && termino < inicio) return alert('A data de finalização não pode ser anterior à data de início.');
+      const textoOriginal = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      try {
+        await garantirAdmin();
+        const { error } = await garantirSupabase().from('obras').update({
+          inicio_em: inicio,
+          finalizada_em: termino,
+          atualizado_por: 'Patrão'
+        }).eq('id', id);
+        if (error) throw error;
+        await carregarDadosDoSupabase();
+        const obraAtualizada = obras.find(o => String(o.id) === String(id));
+        if (obraAtualizada) abrirModalDetalhesObra(id);
+        alert('✅ Datas da obra salvas com sucesso!');
+      } catch (e) {
+        console.error('Erro ao salvar datas da obra:', e);
+        alert('Não consegui salvar as datas. Confira se as colunas inicio_em e finalizada_em foram criadas no Supabase.\n\n' + (e?.message || 'Erro desconhecido.'));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+      }
+    }
+
+    function fecharModalDetalhesObra() {
+      document.getElementById('modal-detalhes-obra')?.classList.add('hidden');
+    }
+
+    function treEscaparPainel(valor) {
+      return String(valor ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function treTipoRegistroPainel(foto) {
+      const tipo = String(foto?.tipo || '').toLowerCase();
+      if (tipo.includes('observa') || tipo.includes('problema') || tipo.includes('ajuste') || tipo.includes('pend')) return 'pendencias';
+      if (tipo.includes('finaliza') || tipo.includes('conclus')) return 'finalizacao';
+      return 'andamento';
+    }
+
+    function renderizarPainelPendencias() {
+      const andamento = obras.filter(o => (o.status || 'Em Andamento') === 'Em Andamento').length;
+      const pendencias = fotosObra.filter(f => treTipoRegistroPainel(f) === 'pendencias').length;
+      const qAndamento = document.getElementById('painel-qtd-andamento');
+      const qPendencias = document.getElementById('painel-qtd-pendencias');
+      const qMidias = document.getElementById('painel-qtd-midias');
+      if (qAndamento) qAndamento.textContent = andamento;
+      if (qPendencias) qPendencias.textContent = pendencias;
+      if (qMidias) qMidias.textContent = fotosObra.length;
+      renderizarListaPainelPendencias();
+    }
+
+    async function excluirRegistroPainel(registroId) {
+      if (!registroId) return alert('Não encontrei o registro selecionado.');
+      if (!confirm('Deseja excluir este registro e sua foto/vídeo do diário de obra?')) return;
+      try {
+        await garantirAdmin();
+        const { error } = await garantirSupabase().from('fotos_obra').delete().eq('id', registroId);
+        if (error) throw error;
+        await carregarDadosDoSupabase();
+        renderizarPainelPendencias();
+        alert('Registro excluído com sucesso.');
+      } catch (e) {
+        console.error('Erro ao excluir registro:', e);
+        alert('Não foi possível excluir o registro.\n\n' + (e?.message || 'Erro desconhecido.'));
+      }
+    }
+
+    function renderizarListaPainelPendencias() {
+      const container = document.getElementById('painel-lista-registros');
+      if (!container) return;
+      const busca = String(document.getElementById('painel-busca')?.value || '').trim().toLocaleLowerCase('pt-BR');
+      const filtro = document.getElementById('painel-filtro')?.value || 'todos';
+      const registros = [...fotosObra].filter(f => {
+        const tipo = treTipoRegistroPainel(f);
+        if (filtro !== 'todos' && filtro !== tipo) return false;
+        const obra = obras.find(o => String(o.id) === String(f.obra_id));
+        const func = equipe.find(e => String(e.id) === String(f.funcionario_id));
+        const haystack = [obra?.nome, obra?.local, func?.nome, f.observacao, f.tipo, f.data, f.file_name].join(' ').toLocaleLowerCase('pt-BR');
+        return !busca || haystack.includes(busca);
+      }).sort((a,b) => String(b.created_at || b.data || '').localeCompare(String(a.created_at || a.data || '')));
+
+      if (!registros.length) {
+        container.innerHTML = '<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center"><p class="text-2xl">📭</p><p class="font-bold text-slate-700 mt-2">Nenhum registro encontrado</p><p class="text-sm text-slate-500 mt-1">Quando a equipe enviar fotos ou vídeos pelo Diário de Obra, eles aparecerão aqui.</p></div>';
+        return;
+      }
+
+      container.innerHTML = registros.map(f => {
+        const obra = obras.find(o => String(o.id) === String(f.obra_id));
+        const func = equipe.find(e => String(e.id) === String(f.funcionario_id));
+        const tipo = treTipoRegistroPainel(f);
+        const ehPendencia = tipo === 'pendencias';
+        const badge = ehPendencia ? 'bg-red-100 text-red-800 border-red-200' : tipo === 'finalizacao' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-blue-100 text-blue-800 border-blue-200';
+        const titulo = ehPendencia ? '⚠️ Observação / Problema / Ajuste' : tipo === 'finalizacao' ? '🏁 Finalização / Conclusão' : '🔨 Andamento diário';
+        const miniatura = f.is_video
+          ? `<div class="h-24 w-24 shrink-0 rounded-lg bg-slate-900 text-white flex items-center justify-center text-2xl">▶️</div>`
+          : (f.imagem ? `<img src="${f.imagem}" alt="Foto da obra" loading="lazy" class="h-24 w-24 shrink-0 rounded-lg object-cover border border-slate-200">` : `<div class="h-24 w-24 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">📷</div>`);
+        return `<article class="rounded-xl border ${ehPendencia ? 'border-red-200 bg-red-50/50' : 'border-slate-200 bg-white'} p-3 flex flex-col sm:flex-row gap-3">
+          ${miniatura}
+          <div class="min-w-0 flex-1 space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-extrabold px-2 py-1 rounded-full border ${badge}">${titulo}</span><span class="text-xs text-slate-500">${treEscaparPainel(f.data || 'Data não informada')}</span></div>
+            <h4 class="font-extrabold text-blue-950">${treEscaparPainel(obra?.nome || 'Obra não encontrada')}</h4>
+            <p class="text-xs text-slate-500">📍 ${treEscaparPainel(obra?.local || 'Endereço não informado')} · 👷 ${treEscaparPainel(func?.nome || 'Ex-colaborador')}</p>
+            <p class="text-sm text-slate-700 whitespace-pre-wrap">${treEscaparPainel(f.observacao || 'Nenhum comentário registrado.')}</p>
+            <p class="text-[11px] text-slate-500">Arquivo: ${treEscaparPainel(f.file_name || (f.is_video ? 'Vídeo' : 'Foto'))}</p>
+            <div class="flex flex-wrap gap-2 pt-1">${f.imagem ? `<a href="${f.imagem}" download="${treEscaparPainel(f.file_name || 'foto-obra')}" class="inline-flex rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold px-3 py-2">💾 Salvar Foto</a>` : ''}<button onclick="excluirRegistroPainel('${String(f.id).replace(/'/g, "\\'")}')" class="rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold px-3 py-2">Excluir</button></div>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    function renderizarObras() {
+      const lista = document.getElementById('lista-obras');
+      if (!lista) return;
+
+      let obrasFiltradas = obras;
+      if (filtroStatusAtual !== 'todas') {
+        const statusMapa = {
+          andamento: 'Em Andamento',
+          pronta: 'Pronta',
+          finalizada: 'Finalizada'
+        };
+        const statusEsperado = statusMapa[filtroStatusAtual] || filtroStatusAtual;
+        obrasFiltradas = obras.filter(o => (o.status || 'Em Andamento') === statusEsperado);
+      }
+
+      if (obrasFiltradas.length === 0) {
+        lista.innerHTML = '<li class="py-4 text-sm text-gray-500 text-center italic">Nenhuma obra encontrada com este status.</li>';
+        return;
+      }
+
+      lista.innerHTML = obrasFiltradas.map(o => {
+        const qtdPdfs = pdfsObra.filter(p => p.obra_id === o.id).length;
+        const qtdFotos = fotosObra.filter(f => f.obra_id === o.id).length;
+        const statusObra = o.status || 'Em Andamento';
+
+        let badgeCor = "bg-amber-100 text-amber-800 border-amber-300";
+        if (statusObra === 'Pronta') badgeCor = "bg-blue-100 text-blue-800 border-blue-300";
+        if (statusObra === 'Finalizada') badgeCor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+
+        return `
+          <li class="py-4 px-3 bg-white/60 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="abrirModalDetalhesObra('${o.id}')" class="font-bold text-blue-950 text-base text-left hover:text-orange-600 underline decoration-dotted underline-offset-4">${o.nome}</button>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeCor}">
+                  ${statusObra}
+                </span>
+              </div>
+              <p class="text-xs text-gray-500 mt-0.5">📍 ${o.local} | Atualizado por: ${o.atualizado_por || 'Geral'}</p>
+              ${o.componente ? `<p class="text-xs text-gray-600 mt-1">🧩 Complemento: ${o.componente}</p>` : ''}
+              ${o.representante ? `<p class="text-xs text-gray-600">👷 Representante: ${o.representante}</p>` : ''}
+              <div class="flex gap-2 mt-1.5">
+                <span class="text-[10px] bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full">${qtdPdfs} PDF(s)</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">${qtdFotos} Mídia(s)</span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <select onchange="mudarStatusObraPatrao('${o.id}', this.value)" class="text-xs p-1.5 border rounded-lg bg-gray-50 font-semibold focus:ring-1 focus:ring-orange-500">
+                <option value="Em Andamento" ${statusObra === 'Em Andamento' ? 'selected' : ''}>🔨 Em Andamento</option>
+                <option value="Pronta" ${statusObra === 'Pronta' ? 'selected' : ''}>✨ Obra Pronta</option>
+                <option value="Finalizada" ${statusObra === 'Finalizada' ? 'selected' : ''}>🏁 100% Finalizada</option>
+              </select>
+
+              <button onclick="editarObra('${o.id}')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">✏️ Editar</button>
+              <button onclick="abrirModalPdf('${o.id}')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">📄 PDFs</button>
+              <button onclick="abrirGaleriaObra('${o.id}')" class="bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">📸 Galeria</button>
+              <button onclick="abrirModalWhatsapp('${o.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">💬 Whats</button>
+              <button onclick="excluirObra('${o.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition">🗑</button>
+            </div>
+          </li>
+        `;
+      }).join('');
+    }
+
+    function treHojeISO() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function treDataISO(valor) {
+      if (!valor) return null;
+      const v = String(valor).trim();
+      let m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+      m = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+      return null;
+    }
+
+    function treDiasEntre(inicio, fim) {
+      const a = treDataISO(inicio), b = treDataISO(fim);
+      if (!a || !b) return null;
+      const [ay,am,ad] = a.split('-').map(Number), [by,bm,bd] = b.split('-').map(Number);
+      const diff = Math.floor((Date.UTC(by,bm-1,bd)-Date.UTC(ay,am-1,ad))/86400000);
+      return diff < 0 ? null : diff + 1;
+    }
+
+    function trePontosDaObra(obraId) {
+      return pontos.filter(p => String(p.obra_id) === String(obraId));
+    }
+
+    function treResumoEquipeObra(obra) {
+      const mapa = new Map();
+      trePontosDaObra(obra.id).forEach(p => {
+        const fid = String(p.funcionario_id || '');
+        const data = treDataISO(p.data || p.created_at);
+        if (!fid || !data) return;
+        if (!mapa.has(fid)) mapa.set(fid, new Set());
+        mapa.get(fid).add(data);
+      });
+      return [...mapa.entries()].map(([fid, dias]) => {
+        const f = equipe.find(x => String(x.id) === fid);
+        return { nome: f?.nome || 'Funcionário removido', dias: dias.size, diaria: treNumeroMonetario(f?.diaria), total: dias.size * treNumeroMonetario(f?.diaria) };
+      }).sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+    }
+
+    function renderizarCronograma() {
+      const lista = document.getElementById('cronograma-lista');
+      const resumo = document.getElementById('cronograma-resumo');
+      if (!lista || !resumo) return;
+      const finalizadas = obras.filter(o => o.status === 'Finalizada').length;
+      const prontas = obras.filter(o => o.status === 'Pronta').length;
+      const andamento = obras.filter(o => !o.status || o.status === 'Em Andamento').length;
+      const totalPontos = pontos.length;
+      const cards = [['Total de obras', obras.length, '🏗️'], ['Em andamento', andamento, '🔨'], ['Prontas', prontas, '✨'], ['Finalizadas', finalizadas, '🏁']];
+      resumo.innerHTML = cards.map(([t,n,ico]) => `<div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs text-slate-500 font-semibold">${ico} ${t}</p><p class="text-2xl font-extrabold text-blue-950 mt-1">${n}</p></div>`).join('');
+      const busca = (document.getElementById('cronograma-busca')?.value || '').trim().toLocaleLowerCase('pt-BR');
+      const filtro = document.getElementById('cronograma-filtro-status')?.value || 'todas';
+      const ordem = document.getElementById('cronograma-ordem')?.value || 'recentes';
+      let itens = obras.filter(o => {
+        const status = o.status || 'Em Andamento';
+        const texto = [o.nome,o.local,o.componente,o.representante].filter(Boolean).join(' ').toLocaleLowerCase('pt-BR');
+        return (filtro === 'todas' || status === filtro) && (!busca || texto.includes(busca));
+      });
+      itens.sort((a,b) => {
+        if (ordem === 'nome') return String(a.nome||'').localeCompare(String(b.nome||''), 'pt-BR');
+        const da = treDataISO(a.inicio_em || a.created_at) || '';
+        const db = treDataISO(b.inicio_em || b.created_at) || '';
+        return ordem === 'antigas' ? da.localeCompare(db) : db.localeCompare(da);
+      });
+      if (!itens.length) { lista.innerHTML = '<div class="rounded-xl border border-dashed p-6 text-center text-sm text-gray-500">Nenhuma obra encontrada com esses filtros.</div>'; return; }
+      lista.innerHTML = itens.map(o => {
+        const status = o.status || 'Em Andamento';
+        const inicio = treDataISO(o.inicio_em || o.created_at);
+        const fim = status === 'Finalizada' ? treDataISO(o.finalizada_em) : null;
+        const duracao = inicio ? treDiasEntre(inicio, fim || treHojeISO()) : null;
+        const equipeObra = treResumoEquipeObra(o);
+        const diasEquipe = equipeObra.reduce((n,f)=>n+f.dias,0);
+        const totalDiarias = equipeObra.reduce((n,f)=>n+f.total,0);
+        const badge = status === 'Finalizada' ? 'bg-emerald-100 text-emerald-800' : status === 'Pronta' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+        const listaEquipe = equipeObra.length ? equipeObra.map(f => `<div class="flex justify-between gap-3 text-xs py-1 border-b last:border-0"><span class="text-slate-700">${f.nome}</span><span class="font-semibold text-slate-800 whitespace-nowrap">${f.dias} dia(s) · R$ ${f.total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`).join('') : '<p class="text-xs text-gray-500">Nenhum ponto de funcionário registrado nesta obra.</p>';
+        return `<article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3"><div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h4 class="font-extrabold text-blue-950">${o.nome || 'Obra sem nome'}</h4><span class="rounded-full px-2 py-1 text-[10px] font-bold ${badge}">${status}</span></div><p class="text-xs text-gray-500 mt-1">📍 ${o.local || 'Local não informado'}${o.componente ? ' · Complemento: '+o.componente : ''}</p>${o.representante ? `<p class="text-xs text-gray-500 mt-1">👷 Representante: ${o.representante}</p>` : ''}</div></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4"><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Início</p><p class="text-sm font-bold">${inicio ? formatarDataObra(inicio) : 'Não registrada'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Término</p><p class="text-sm font-bold">${status === 'Finalizada' ? (fim ? formatarDataObra(fim) : 'Não registrada') : 'Em aberto'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Duração corrida</p><p class="text-sm font-bold">${duracao === null ? '—' : duracao+' dia(s)'}</p></div><div class="rounded-lg bg-slate-50 p-3"><p class="text-[10px] text-slate-500">Diárias registradas</p><p class="text-sm font-bold">${diasEquipe} dia(s)</p><p class="text-[10px] text-slate-500">R$ ${totalDiarias.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} estimados</p></div></div><details class="mt-3"><summary class="cursor-pointer select-none text-sm font-bold text-blue-900">👥 Funcionários e diárias (${equipeObra.length})</summary><div class="mt-2 rounded-lg bg-slate-50 p-3">${listaEquipe}<p class="text-[10px] text-gray-500 mt-2">Valores estimados: dias únicos com ponto × diária atual do funcionário. Para histórico financeiro exato, seria necessário guardar o valor da diária no momento de cada ponto.</p></div></details></article>`;
+      }).join('');
+    }
+
+    async function editarObra(id) {
+      await garantirAdmin();
+      const obra = obras.find(o => String(o.id) === String(id));
+      if (!obra) { alert('Obra não encontrada.'); return; }
+      const nome = prompt('Número / nome da obra:', obra.nome || '');
+      if (nome === null) return;
+      const local = prompt('Localização / endereço:', obra.local || '');
+      if (local === null) return;
+      const componente = prompt('Complemento (ex.: torre, garagem, dock):', obra.componente || '');
+      if (componente === null) return;
+      const representante = prompt('Representante (ex.: mestre / engenheiro):', obra.representante || '');
+      if (representante === null) return;
+      const observacoes = prompt('Observações / instruções da obra (visíveis ao funcionário):', obra.observacoes || obra.observacao || '');
+      if (observacoes === null) return;
+      if (!nome.trim() || !local.trim()) { alert('Nome/número e localização são obrigatórios.'); return; }
+      const { error } = await supabaseClient.from('obras').update({
+        nome: nome.trim(), local: local.trim(), componente: componente.trim(),
+        representante: representante.trim(), observacoes: observacoes.trim(), atualizado_por: 'Patrão'
+      }).eq('id', id);
+      if (error) { alert('Erro ao editar obra: ' + error.message + '\n\nConfira se executou o SQL de atualização incluído no ZIP.'); return; }
+      await carregarDadosDoSupabase();
+    }
+
+    async function mudarStatusObraPatrao(id, novoStatus) {
+      try {
+        await garantirAdmin();
+        const obraAntes = obras.find(o => String(o.id) === String(id));
+        const atualizacao = { status: novoStatus, atualizado_por: 'Patrão' };
+        // Compatibilidade temporária caso o SQL de datas ainda não tenha sido aplicado.
+        if (novoStatus === 'Finalizada' && obraAntes && obraAntes.status !== 'Finalizada') {
+          atualizacao.finalizada_em = treHojeISO();
+        }
+        const { error } = await garantirSupabase().from('obras').update(atualizacao).eq('id', id);
+        if (error) {
+          // Se a coluna de datas não existe, tenta apenas o status para não bloquear o fluxo principal.
+          if (/finalizada_em|column/i.test(error.message || '')) {
+            const fallback = await garantirSupabase().from('obras').update({ status: novoStatus, atualizado_por: 'Patrão' }).eq('id', id);
+            if (fallback.error) throw fallback.error;
+            alert('Status atualizado, mas as datas ainda não estão habilitadas no banco. Execute o arquivo SQL de datas para ativá-las.');
+          } else throw error;
+        }
+        await carregarDadosDoSupabase();
+      } catch (e) {
+        console.error('Erro ao atualizar status da obra:', e);
+        alert('Não consegui atualizar o status da obra. Nada foi confirmado no aplicativo.\n\n' + (e?.message || 'Erro desconhecido.'));
+        await carregarDadosDoSupabase();
+      }
+    }
+
+
+    /* =========================================================
+       EXCLUIR OBRA
+       ========================================================= */
+
+    async function excluirObra(id) {
+      await garantirAdmin();
+      if (confirm("Deseja excluir esta obra?")) {
+        await supabaseClient.from('obras').delete().eq('id', id);
+        carregarDadosDoSupabase();
+      }
+    }
+
+
+    /* =========================================================
+       MODAL PDF
+       ========================================================= */
+
+    function abrirModalPdf(obraId) {
+      const obra = obras.find(o => o.id === obraId);
+      if (!obra) return;
+
+      document.getElementById('modal-pdf-obra-id').value = obraId;
+      document.getElementById('modal-pdf-obra-nome').textContent = `Obra: ${obra.nome}`;
+      document.getElementById('pdf-titulo-input').value = '';
+      document.getElementById('pdf-file-input').value = '';
+
+      renderizarListaPdfsModal(obraId);
+      document.getElementById('modal-anexar-pdf').classList.remove('hidden');
+    }
+
+    function renderizarListaPdfsModal(obraId) {
+      const container = document.getElementById('lista-pdfs-existentes');
+      const pdfs = pdfsObra.filter(p => p.obra_id === obraId);
+
+      if (pdfs.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-500 italic py-2">Nenhum PDF cadastrado.</p>';
+        return;
+      }
+
+      container.innerHTML = pdfs.map(p => `
+        <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-xl border text-xs">
+          <div>
+            <p class="font-bold text-gray-800">${p.titulo || 'Projeto PDF'}</p>
+            <p class="text-[10px] text-gray-500">${p.data}</p>
+          </div>
+          <div class="flex items-center gap-1">
+            <a href="${p.url}" target="_blank" class="bg-purple-100 text-purple-800 font-bold px-2 py-1 rounded hover:bg-purple-200">Ver</a>
+            <button onclick="excluirPdf('${p.id}', '${obraId}')" class="bg-red-100 text-red-700 font-bold px-2 py-1 rounded hover:bg-red-200">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function salvarPdfObra() {
+      await garantirAdmin();
+      const btn = document.getElementById('btn-pdf-salvar');
+      const obraId = document.getElementById('modal-pdf-obra-id').value;
+      const tituloBase = document.getElementById('pdf-titulo-input').value.trim() || 'Projeto PDF';
+      const fileInput = document.getElementById('pdf-file-input');
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Selecione pelo menos um arquivo PDF!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "⏳ ANEXANDO...";
+
+      const files = Array.from(fileInput.files);
+      for (let index = 0; index < files.length; index++) {
+        const file = files[index];
+        if (file.type !== 'application/pdf') continue;
+
+        await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = async function(e) {
+            const nomeTitulo = files.length > 1 ? `${tituloBase} (${file.name})` : tituloBase;
+            const novoPdf = {
+              id: gerarId(),
+              obra_id: obraId,
+              titulo: nomeTitulo,
+              url: e.target.result,
+              data: new Date().toLocaleDateString('pt-BR')
+            };
+            garantirSupabase()
+              .from('pdfs_obra')
+              .insert([novoPdf])
+              .then(({ error }) => {
+                if (error) {
+                  reject(error);
+                  return;
+                }
+                resolve();
+              })
+              .catch(reject);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      alert("📄 PDF(s) anexado(s) com sucesso!");
+      document.getElementById('pdf-titulo-input').value = '';
+      fileInput.value = '';
+      btn.disabled = false;
+      btn.innerText = "📎 Adicionar PDF(s) à Obra";
+      carregarDadosDoSupabase();
+      renderizarListaPdfsModal(obraId);
+    }
+
+    async function excluirPdf(pdfId, obraId) {
+      await garantirAdmin();
+      if (confirm("Deseja remover este PDF?")) {
+        await supabaseClient.from('pdfs_obra').delete().eq('id', pdfId);
+        carregarDadosDoSupabase();
+        renderizarListaPdfsModal(obraId);
+      }
+    }
+
+    function fecharModalPdf() {
+      document.getElementById('modal-anexar-pdf').classList.add('hidden');
+    }
+
+
+    /* =========================================================
+       GALERIA
+       ========================================================= */
+
+    let obraGaleriaAtualId = null;
+
+    function abrirGaleriaObra(obraId) {
+      obraGaleriaAtualId = obraId;
+      const obra = obras.find(o => o.id === obraId);
+      if (!obra) return;
+
+      document.getElementById('modal-obra-titulo').textContent = `Galeria - ${obra.nome}`;
+      const container = document.getElementById('modal-galeria-conteudo');
+      const fotos = fotosObra.filter(f => f.obra_id === obraId);
+
+      if (fotos.length === 0) {
+        container.innerHTML = '<p class="col-span-2 text-sm text-gray-500 italic py-8 text-center">Nenhuma mídia enviada ainda.</p>';
+      } else {
+        container.innerHTML = fotos.map(f => {
+          const func = equipe.find(eq => eq.id === f.funcionario_id);
+          const midiaElemento = f.is_video
+            ? `<video src="${f.imagem}" controls class="w-full h-48 object-cover bg-black rounded-t-2xl"></video>`
+            : `<img src="${f.imagem}" class="w-full h-48 object-cover bg-black" alt="Mídia">`;
+
+          return `
+            <div class="border rounded-2xl overflow-hidden bg-gray-50 shadow-sm flex flex-col justify-between">
+              ${midiaElemento}
+              <div class="p-3 text-xs space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="font-bold text-blue-950">${func ? func.nome : 'Ex-colaborador'}</span>
+                  <span class="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full font-semibold">${f.data}</span>
+                </div>
+                <p class="font-semibold text-emerald-700">Tipo: ${f.tipo}</p>
+                <p class="text-gray-600 italic">"${f.observacao || 'Sem observações'}"</p>
+                <div class="pt-2 flex justify-between items-center">
+                  <a href="${f.imagem}" download="obra-foto-${f.id}.${f.is_video ? 'mp4' : 'jpg'}" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded hover:bg-emerald-200 transition">💾 Salvar Foto</a>
+                  <button onclick="excluirFotoObra('${f.id}', '${obraId}')" class="text-xs text-red-600 font-bold hover:underline">Excluir</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('modal-galeria-obra').classList.remove('hidden');
+    }
+
+    async function exportarGaleriaZip() {
+      if (!obraGaleriaAtualId) return;
+      const obra = obras.find(o => o.id === obraGaleriaAtualId);
+      const fotos = fotosObra.filter(f => f.obra_id === obraGaleriaAtualId);
+
+      if (fotos.length === 0) {
+        alert("Não há fotos para exportar.");
+        return;
+      }
+
+      const zip = new JSZip();
+      const pastaFotos = zip.folder("fotos_obra");
+
+      fotos.forEach((f, index) => {
+        if (f.imagem && f.imagem.includes(',')) {
+          const arr = f.imagem.split(',');
+          const mime = arr[0].match(/:(.*?);/)[1];
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+          const ext = mime.includes('video') ? 'mp4' : 'jpg';
+          pastaFotos.file(`foto_${index + 1}_${f.tipo}.${ext}`, u8arr);
+        }
+      });
+
+      try {
+        const content = await zip.generateAsync({ type: "blob" });
+        saveAs(content, `Galeria_Obra_${obra ? obra.nome.replace(/\s+/g, '_') : 'Export'}.zip`);
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao gerar ZIP.");
+      }
+    }
+
+    async function excluirFotoObra(fotoId, obraId) {
+      await garantirAdmin();
+      if (confirm("Deseja excluir este arquivo?")) {
+        await supabaseClient.from('fotos_obra').delete().eq('id', fotoId);
+        await carregarDadosDoSupabase();
+        abrirGaleriaObra(obraId);
+      }
+    }
+
+    function fecharModalGaleria() {
+      document.getElementById('modal-galeria-obra').classList.add('hidden');
+    }
+
+
+    /* =========================================================
+       WHATSAPP
+       ========================================================= */
+
+    function abrirModalWhatsapp(obraId) {
+      const obra = obras.find(o => o.id === obraId);
+      if (!obra) return;
+
+      document.getElementById('modal-whatsapp-obra-id').value = obraId;
+      document.getElementById('modal-whatsapp-obra-nome').textContent = `Obra: ${obra.nome}`;
+      document.getElementById('modal-whatsapp-obra-local').value = obra.local;
+      document.getElementById('modal-whatsapp-mensagem').value = '';
+      document.getElementById('modal-whatsapp-obra').classList.remove('hidden');
+    }
+
+    function fecharModalWhatsapp() {
+      document.getElementById('modal-whatsapp-obra').classList.add('hidden');
+    }
+
+    function enviarMensagemWhatsapp() {
+      const obraId = document.getElementById('modal-whatsapp-obra-id').value;
+      const funcId = document.getElementById('modal-whatsapp-funcionario').value;
+      const local = document.getElementById('modal-whatsapp-obra-local').value;
+      const instrucao = document.getElementById('modal-whatsapp-mensagem').value;
+
+      const obra = obras.find(o => o.id === obraId);
+      const func = equipe.find(f => f.id === funcId);
+
+      if (!func || !obra) {
+        alert("Selecione o funcionário e a obra!");
+        return;
+      }
+
+      let texto = `Olá *${func.nome}*, tudo bem?\n\n`;
+      texto += `*Aviso de Convocação de Obra - T.R.E. Montagens*\n\n`;
+      texto += `🏗️ *Obra:* ${obra.nome}\n`;
+      texto += `📍 *Local:* ${local}\n`;
+      if (instrucao) texto += `📝 *Instruções:* ${instrucao}\n`;
+      texto += `\nPor favor, confirme e bata o ponto na chegada!`;
+
+      const numLimpo = func.whatsapp ? func.whatsapp.replace(/\D/g, '') : '';
+      const link = numLimpo
+        ? `https://api.whatsapp.com/send?phone=${numLimpo}&text=${encodeURIComponent(texto)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+
+      window.open(link, '_blank');
+      fecharModalWhatsapp();
+    }
+
+
+    /* =========================================================
+       CADASTRAR / EDITAR FUNCIONÁRIO
+       ========================================================= */
+
+    async function cadastrarFuncionario() {
+      const btn = document.getElementById('btn-salvar-func');
+      const editId = document.getElementById('edit-func-id').value.trim();
+      const nome = document.getElementById('func-nome').value.trim();
+      const whatsapp = document.getElementById('func-whatsapp').value.trim();
+      const diaria = treNumeroMonetario(document.getElementById('func-diaria').value);
+      const pin = document.getElementById('func-pin').value.trim();
+      if (!nome) return alert('Informe o nome completo do funcionário.');
+      if (!Number.isFinite(diaria) || diaria <= 0) return alert('Informe uma diária válida maior que zero.');
+      if (!/^\d{4}$/.test(pin)) return alert('O PIN deve conter exatamente 4 dígitos.');
+      btn.disabled = true; const textoOriginal = btn.textContent;
+      try {
+        await garantirAdmin();
+        const { data, error } = await garantirSupabase().rpc('admin_save_employee', {
+          p_id: editId || null, p_nome: nome, p_whatsapp: whatsapp || null, p_diaria: diaria, p_pin: pin
+        });
+        if (error) throw error;
+        if (!data?.ok || !data?.id) throw new Error(data?.message || 'Não foi possível salvar o funcionário.');
+        await carregarDadosDoSupabase();
+        const salvo = equipe.some(f => String(f.id) === String(data.id));
+        if (!salvo) throw new Error('O Supabase confirmou a operação, mas o funcionário não apareceu na leitura seguinte. Verifique a migração/RLS do banco.');
+        alert(editId ? '✅ Funcionário atualizado e confirmado no banco.' : '✅ Funcionário cadastrado e confirmado no banco.');
+        cancelarEdicaoFuncionario();
+      } catch (erro) {
+        console.error('Erro ao salvar funcionário:', erro);
+        alert('❌ Não foi possível salvar o funcionário.\n\n' + (erro?.message || 'Erro desconhecido.'));
+      } finally { btn.disabled = false; btn.textContent = editId ? 'Salvar Alterações' : textoOriginal; }
+    }
+
+    function prepararEdicaoFuncionario(id) {
+      const f = equipe.find(item => item.id === id);
+      if (!f) return;
+
+      document.getElementById('edit-func-id').value = f.id;
+      document.getElementById('func-nome').value = f.nome;
+      document.getElementById('func-whatsapp').value = f.whatsapp || '';
+      document.getElementById('func-diaria').value = f.diaria;
+      document.getElementById('func-pin').value = '';
+      document.getElementById('func-pin').placeholder = 'Novo PIN (4 dígitos)';
+
+      document.getElementById('titulo-form-func').textContent = `Editar Colaborador: ${f.nome}`;
+      document.getElementById('btn-salvar-func').textContent = 'Salvar Alterações';
+      document.getElementById('btn-cancelar-edicao').classList.remove('hidden');
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicaoFuncionario() {
+      document.getElementById('edit-func-id').value = '';
+      document.getElementById('func-nome').value = '';
+      document.getElementById('func-whatsapp').value = '';
+      document.getElementById('func-diaria').value = '';
+      document.getElementById('func-pin').value = '';
+      document.getElementById('func-pin').placeholder = 'PIN Individual (4 dígitos)';
+
+      document.getElementById('titulo-form-func').textContent = 'Cadastrar Novo Colaborador';
+      document.getElementById('btn-salvar-func').textContent = 'Cadastrar Funcionário';
+      document.getElementById('btn-cancelar-edicao').classList.add('hidden');
+    }
+
+
+    /* =========================================================
+       EQUIPE
+       ========================================================= */
+
+    // Converte valores monetários com segurança, aceitando tanto 1250.50
+    // quanto formatos brasileiros como "1.250,50" ou "R$ 1.250,50".
+    function treNumeroMonetario(valor) {
+      if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+      if (valor === null || valor === undefined || String(valor).trim() === '') return 0;
+      let texto = String(valor).trim().replace(/R\$\s?/gi, '').replace(/\s/g, '');
+      if (texto.includes(',')) {
+        texto = texto.replace(/\./g, '').replace(',', '.');
+      }
+      const numero = Number(texto);
+      return Number.isFinite(numero) ? numero : 0;
+    }
+
+    function renderizarEquipe() {
+      const lista = document.getElementById('lista-equipe');
+      if (!lista) return;
+      const ativos = equipe.filter(f => f.ativo !== false);
+
+      if (ativos.length === 0) {
+        lista.innerHTML = '<li class="py-3 text-sm text-gray-500">Nenhum colaborador ativo.</li>';
+        return;
+      }
+
+      lista.innerHTML = ativos.map(f => `
+        <li class="py-3 flex justify-between items-center gap-2">
+          <div>
+            <p class="font-bold text-blue-950">${f.nome}</p>
+            <p class="text-xs text-gray-500">📱 ${f.whatsapp || 'Sem Whats'} | Diária: R$ ${treNumeroMonetario(f.diaria).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} | PIN: ****</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="prepararEdicaoFuncionario('${f.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">✏️ Editar</button>
+            <button onclick="desativarFuncionario('${f.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">Remover</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    async function desativarFuncionario(id) {
+      await garantirAdmin();
+      if (!confirm("Remover este colaborador da equipe ativa?")) return;
+
+      try {
+        const { error } = await garantirSupabase()
+          .from('equipe')
+          .update({ ativo: false })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        await carregarDadosDoSupabase();
+      } catch (erro) {
+        console.error('Erro ao desativar funcionário:', erro);
+        alert('❌ Não foi possível desativar o funcionário.\n\n' + (erro?.message || 'Erro desconhecido.'));
+      }
+    }
+
+
+    /* =========================================================
+       ALTERNAR CAMPOS DE DESIGNAÇÃO
+       ========================================================= */
+
+    function preencherValorDiariaPadrao() {
+      const tipoEl = document.getElementById('designar-tipo');
+      const funcionarioEl = document.getElementById('designar-funcionario');
+      const valorEl = document.getElementById('designar-valor');
+      if (!tipoEl || !funcionarioEl || !valorEl || tipoEl.value !== 'Diária') return;
+      const func = equipe.find(f => String(f.id) === String(funcionarioEl.value));
+      const diaria = treNumeroMonetario(func?.diaria);
+      if (Number.isFinite(diaria) && diaria > 0) {
+        // Só preenche o padrão; não sobrescreve um valor manual já informado.
+        if (!valorEl.value || valorEl.dataset.valorAutomatico === 'true') {
+          valorEl.value = diaria.toFixed(2);
+          valorEl.dataset.valorAutomatico = 'true';
+        }
+      } else if (valorEl.dataset.valorAutomatico === 'true') {
+        // Não apagar um valor já exibido quando a consulta de funcionário vier incompleta.
+        valorEl.dataset.valorAutomatico = 'false';
+      }
+    }
+
+    function alternarCamposDesignacao() {
+      const tipo = document.getElementById('designar-tipo').value;
+      const blocoMetragem = document.getElementById('bloco-metragem');
+      const labelValor = document.getElementById('label-valor-variavel');
+
+      if (tipo === 'Diária') {
+        labelValor.textContent = 'Valor da Diária (R$):';
+        blocoMetragem.classList.add('hidden');
+      } else if (tipo === 'Empreita Global') {
+        labelValor.textContent = 'Valor Total da Empreita (R$):';
+        blocoMetragem.classList.add('hidden');
+      } else if (tipo === 'Metro Quadrado') {
+        labelValor.textContent = 'Valor por m² (R$):';
+        blocoMetragem.classList.remove('hidden');
+      } else if (tipo === 'Por Hora') {
+        labelValor.textContent = 'Valor por Hora (R$):';
+        blocoMetragem.classList.remove('hidden');
+      }
+    }
+
+
+    /* =========================================================
+       DESIGNAR OBRA
+       ========================================================= */
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const campoValorDiaria = document.getElementById('designar-valor');
+      if (campoValorDiaria) {
+        campoValorDiaria.addEventListener('input', () => {
+          campoValorDiaria.dataset.valorAutomatico = 'false';
+        });
+      }
+      preencherValorDiariaPadrao();
+    });
+
+    async function confirmarEEnviarDesignacao() {
+      const btn = document.getElementById('btn-designar');
+      const funcId = document.getElementById('designar-funcionario').value;
+      const obraId = document.getElementById('designar-obra').value;
+      const tipo = document.getElementById('designar-tipo').value;
+      const valor = parseFloat(document.getElementById('designar-valor').value);
+      const quantidade = parseFloat(document.getElementById('designar-quantidade').value) || 1;
+      const dataInicio = document.getElementById('designar-data').value;
+      const instrucao = document.getElementById('designar-instrucao').value.trim();
+
+      if (!funcId || !obraId || !dataInicio || !Number.isFinite(valor) || valor <= 0) {
+        alert("Preencha todos os campos obrigatórios e informe um valor válido!");
+        return;
+      }
+
+      const func = equipe.find(f => f.id === funcId);
+      const obra = obras.find(o => o.id === obraId);
+
+      if (!func || !obra) {
+        alert("Funcionário ou obra não encontrado.");
+        return;
+      }
+
+      btn.disabled = true;
+
+      try {
+        let totalCalculado = valor;
+        if (tipo === 'Metro Quadrado' || tipo === 'Por Hora') {
+          totalCalculado = valor * quantidade;
+        }
+
+        const novaDesignacao = {
+          id: gerarId(),
+          funcionario_id: funcId,
+          obra_id: obraId,
+          tipo_contratacao: tipo,
+          valor_unitario: valor,
+          quantidade: quantidade,
+          valor_total: totalCalculado,
+          data: dataInicio,
+          observacao: instrucao
+        };
+
+        const { error } = await supabaseClient.from('designacoes').insert([novaDesignacao]);
+        if (error) throw error;
+
+        const linkTRE = 'https://tregestaoobr-sketch.github.io/tre-montagens/';
+        let texto = `Olá *${func.nome}*, você foi escalado para uma obra pela *T.R.E. Montagens*!\n\n`;
+        texto += `🏗️ *Obra:* ${obra.nome}\n`;
+
+        const endereco = (obra.local || '').trim();
+        if (endereco) {
+          const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
+          texto += `📍 *Localização:* ${endereco}\n`;
+          texto += `🗺️ *Abrir localização no Google Maps:*\n${linkMaps}\n`;
+        }
+
+        texto += `💼 *Tipo:* ${tipo}\n`;
+        if (tipo === 'Metro Quadrado') texto += `📐 *Metragem:* ${quantidade} m²\n`;
+        if (tipo === 'Por Hora') texto += `⏱️ *Horas:* ${quantidade} h\n`;
+        texto += `💰 *Valor Acordado:* R$ ${totalCalculado.toFixed(2)}\n`;
+        texto += `📅 *Início:* ${dataInicio}\n`;
+        if (instrucao) texto += `📝 *Instruções:* ${instrucao}\n`;
+        texto += `\nPor favor, confirme a recepção pelo site/aplicativo T.R.E.:\n${linkTRE}`;
+
+        const numLimpo = func.whatsapp ? func.whatsapp.replace(/\D/g, '') : '';
+        const link = numLimpo
+          ? `https://api.whatsapp.com/send?phone=${numLimpo}&text=${encodeURIComponent(texto)}`
+          : `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+
+        window.open(link, '_blank');
+        alert("✅ Convocação registrada e WhatsApp aberto com sucesso!");
+
+        document.getElementById('designar-valor').value = '';
+        delete document.getElementById('designar-valor').dataset.valorAutomatico;
+        preencherValorDiariaPadrao();
+        document.getElementById('designar-quantidade').value = '';
+        document.getElementById('designar-instrucao').value = '';
+        carregarDadosDoSupabase();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao designar funcionário.");
+      }
+
+      btn.disabled = false;
+    }
+
+    function renderizarDesignacoes() {
+      const container = document.getElementById('lista-designacoes');
+      if (!container) return;
+
+      if (designacoes.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-500 py-2">Nenhuma designação registrada.</p>';
+        return;
+      }
+
+      container.innerHTML = designacoes.map(d => {
+        const func = equipe.find(f => f.id === d.funcionario_id);
+        const obra = obras.find(o => o.id === d.obra_id);
+        return `
+          <div class="py-2.5 flex justify-between items-center">
+            <div>
+              <p class="font-bold text-blue-950">${func ? func.nome : 'Ex-colaborador'} $\rightarrow$ ${obra ? obra.nome : 'Obra'}</p>
+              <p class="text-xs text-gray-500">${d.tipo_contratacao} | Total: R$ ${Number(d.valor_total).toFixed(2)} | Início: ${d.data || 'Não informado'}</p>
+            </div>
+            <button onclick="excluirDesignacao('${d.id}')" class="text-xs text-red-600 font-bold hover:underline">Excluir</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function excluirDesignacao(id) {
+      await garantirAdmin();
+      if (confirm("Excluir esta designação?")) {
+        const { error } = await garantirSupabase().from('designacoes').delete().eq('id', id);
+        if (error) {
+          alert('❌ Não foi possível excluir a designação.\n\n' + error.message);
+          return;
+        }
+        await carregarDadosDoSupabase();
+      }
+    }
+
+
+    /* =========================================================
+       PRESENÇAS (ADMIN)
+       ========================================================= */
+
+    function carregarPresencas() {
+      const tbody = document.getElementById('tabela-presencas');
+      if (!tbody) return;
+
+      if (pontos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">Nenhum ponto registrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = pontos.map(p => {
+        const func = equipe.find(f => f.id === p.funcionario_id);
+        const obra = obras.find(o => o.id === p.obra_id);
+        let gpsTxt = '<span class="text-gray-400">Sem GPS</span>';
+        if (p.gps && p.gps.lat) {
+          const mapsLink = `https://www.google.com/maps?q=${p.gps.lat},${p.gps.lng}`;
+          gpsTxt = `<a href="${mapsLink}" target="_blank" class="text-blue-600 font-bold hover:underline">📍 Ver no Mapa</a>`;
+        }
+
+        return `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 border-b font-semibold">${p.data} às ${p.hora}</td>
+            <td class="p-3 border-b">${func ? func.nome : 'Ex-colaborador'}</td>
+            <td class="p-3 border-b">${obra ? obra.nome : 'Desconhecida'}</td>
+            <td class="p-3 border-b">${gpsTxt}</td>
+            <td class="p-3 border-b text-right">
+              <button onclick="excluirPonto('${p.id}')" class="text-xs bg-red-100 text-red-700 font-bold px-2 py-1 rounded hover:bg-red-200">Excluir</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function excluirPonto(id) {
+      await garantirAdmin();
+      if (confirm("Deseja excluir este registro de ponto?")) {
+        await supabaseClient.from('pontos').delete().eq('id', id);
+        carregarDadosDoSupabase();
+        setTimeout(carregarPresencas, 300);
+      }
+    }
+
+
+    /* =========================================================
+       VALES (ADMIN)
+       ========================================================= */
+
+    function carregarValesAdmin() {
+      const container = document.getElementById('container-vales-admin');
+      if (!container) return;
+
+      if (vales.length === 0) {
+        container.innerHTML = '<p class="col-span-2 text-sm text-gray-500 italic py-4 text-center">Nenhum vale ou ressarcimento registrado.</p>';
+        return;
+      }
+
+      container.innerHTML = vales.map(v => {
+        const func = equipe.find(f => f.id === v.funcionario_id);
+        const obra = obras.find(o => o.id === v.obra_id);
+        const corTipo = v.tipo === 'Vale' ? 'bg-red-50 border-red-200 text-red-900' : 'bg-blue-50 border-blue-200 text-blue-900';
+
+        return `
+          <div class="border rounded-2xl p-4 ${corTipo} space-y-2 shadow-sm">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-sm uppercase">${v.tipo}</span>
+              <span class="text-xs font-semibold px-2 py-0.5 bg-white/80 rounded-full">${v.data}</span>
+            </div>
+            <p class="font-extrabold text-base">${func ? func.nome : 'Colaborador'}</p>
+            <p class="text-xs">Obra: ${obra ? obra.nome : 'Geral'}</p>
+            <p class="text-sm font-bold">Valor: R$ ${Number(v.valor).toFixed(2)}</p>
+            <p class="text-xs italic">Obs: "${v.descricao || 'Sem descrição'}"</p>
+            <div class="pt-2 text-right">
+              <button onclick="excluirVale('${v.id}')" class="text-xs bg-red-600 text-white font-bold px-2.5 py-1 rounded hover:bg-red-700">Excluir Lançamento</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function excluirVale(id) {
+      await garantirAdmin();
+      if (confirm("Deseja excluir este lançamento?")) {
+        await supabaseClient.from('vales').delete().eq('id', id);
+        carregarDadosDoSupabase();
+        setTimeout(carregarValesAdmin, 300);
+      }
+    }
+
+    async function exportarComprovantesZip() {
+      const valesComComprovante = vales.filter(v => v.comprovante);
+      if (valesComComprovante.length === 0) {
+        alert("Não há comprovantes com imagem para exportar.");
+        return;
+      }
+
+      const zip = new JSZip();
+      const pasta = zip.folder("comprovantes");
+
+      valesComComprovante.forEach((v, index) => {
+        if (v.comprovante && v.comprovante.includes(',')) {
+          const arr = v.comprovante.split(',');
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) { u8arr[n] = bstr.charCodeAt(n); }
+          pasta.file(`comprovante_${index + 1}_${v.tipo}.jpg`, u8arr);
+        }
+      });
+
+      try {
+        const content = await zip.generateAsync({ type: "blob" });
+        saveAs(content, "Comprovantes_TRE.zip");
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao gerar ZIP de comprovantes.");
+      }
+    }
+
+
+    /* =========================================================
+       FECHAMENTO MENSAL
+       ========================================================= */
+
+    function calcularFechamentoMensal() {
+      const mes = parseInt(document.getElementById('fechamento-mes').value);
+      const ano = parseInt(document.getElementById('fechamento-ano').value);
+      const tbody = document.getElementById('tabela-fechamento');
+      if (!tbody) return;
+
+      const ativos = equipe.filter(f => f.ativo !== false);
+      if (ativos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-500 italic">Nenhum colaborador cadastrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = ativos.map(f => {
+        const desigsFunc = designacoes.filter(d => {
+          if (d.funcionario_id !== f.id || !d.data) return false;
+
+          // O input de designação usa YYYY-MM-DD. Aceitamos também DD/MM/YYYY
+          // para não perder registros antigos.
+          const valorData = String(d.data);
+          let anoData;
+          let mesData;
+
+          if (/^\d{4}-\d{2}-\d{2}$/.test(valorData)) {
+            const [a, m] = valorData.split('-').map(Number);
+            anoData = a;
+            mesData = m - 1;
+          } else {
+            const partes = valorData.split('/');
+            if (partes.length !== 3) return false;
+            mesData = parseInt(partes[1], 10) - 1;
+            anoData = parseInt(partes[2], 10);
+          }
+
+          return mesData === mes && anoData === ano;
+        });
+
+        let totalBruto = 0;
+        const diariaAtual = treNumeroMonetario(f.diaria);
+        let tipoDescricao = `Diária (R$ ${diariaAtual.toFixed(2)})`;
+        let diasOuProducao = 0;
+
+        // Um funcionário pode ter diárias em algumas obras e empreita em outra.
+        // A regra antiga escolhia a primeira empreita e zerava as diárias do mês inteiro.
+        const tiposEmpreita = ['Empreita Global', 'Metro Quadrado', 'Por Hora'];
+        const desigsEmpreita = desigsFunc.filter(d => tiposEmpreita.includes(d.tipo_contratacao));
+        const obrasComEmpreita = new Set(desigsEmpreita.map(d => String(d.obra_id)));
+        let totalEmpreitasLiberadas = 0;
+        let empreitaPendente = false;
+        desigsEmpreita.forEach(d => {
+          const obraObj = obras.find(o => String(o.id) === String(d.obra_id));
+          if (obraObj && obraObj.status === 'Finalizada') {
+            totalEmpreitasLiberadas += Number(d.valor_total) || 0;
+          } else {
+            empreitaPendente = true;
+          }
+        });
+
+        const diasUnicos = new Set();
+        pontos.forEach(p => {
+          if (String(p.funcionario_id) !== String(f.id)) return;
+          if (obrasComEmpreita.has(String(p.obra_id))) return; // não duplica ponto dentro de uma obra por empreita
+          const dataISO = treDataISO(p.data || p.created_at);
+          if (!dataISO) return;
+          const [anoP, mesP] = dataISO.split('-').map(Number);
+          if (mesP - 1 === mes && anoP === ano) diasUnicos.add(dataISO);
+        });
+        diasOuProducao = diasUnicos.size;
+        const totalDiarias = diasOuProducao * diariaAtual;
+        totalBruto = totalDiarias + totalEmpreitasLiberadas;
+        if (desigsEmpreita.length) {
+          const nomesTipos = [...new Set(desigsEmpreita.map(d => d.tipo_contratacao))].join(' + ');
+          tipoDescricao = diasOuProducao ? `Diárias + ${nomesTipos}` : nomesTipos;
+          if (empreitaPendente) tipoDescricao += ' (há empreita aguardando obra finalizada)';
+        }
+
+        const valesFuncMes = vales.filter(v => {
+          if (String(v.funcionario_id) !== String(f.id)) return false;
+          const dataISO = treDataISO(v.data || v.created_at);
+          if (!dataISO) return false;
+          const [anoVale, mesVale] = dataISO.split('-').map(Number);
+          return mesVale - 1 === mes && anoVale === ano;
+        });
+
+        let totalVales = 0;
+        let totalRessarcimentos = 0;
+
+        valesFuncMes.forEach(v => {
+          const val = Number(v.valor) || 0;
+          if (v.tipo === 'Ressarcimento') {
+            totalRessarcimentos += val;
+          } else {
+            totalVales += val;
+          }
+        });
+
+        const saldoAPagar = totalBruto + totalRessarcimentos - totalVales;
+
+        return `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 border-b font-bold text-blue-950">${f.nome}</td>
+            <td class="p-3 border-b text-center text-xs">${tipoDescricao}</td>
+            <td class="p-3 border-b text-center font-semibold">${diasOuProducao}</td>
+            <td class="p-3 border-b text-right font-bold text-gray-800">R$ ${totalBruto.toFixed(2)}</td>
+            <td class="p-3 border-b text-right font-semibold text-blue-700">+ R$ ${totalRessarcimentos.toFixed(2)}</td>
+            <td class="p-3 border-b text-right font-semibold text-red-600">- R$ ${totalVales.toFixed(2)}</td>
+            <td class="p-3 border-b text-right font-extrabold text-emerald-700 text-base">R$ ${saldoAPagar.toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportarExcelFechamento() {
+      const tabela = document.getElementById('tabela-fechamento-export');
+      const wb = XLSX.utils.table_to_book(tabela, { sheet: "Fechamento Mensal" });
+      XLSX.writeFile(wb, "Fechamento_TRE_Montagens.xlsx");
+    }
+
+    function exportarPdfFechamento() {
+      const elemento = document.getElementById('area-impressao-fechamento');
+      const opt = {
+        margin:       10,
+        filename:     'Fechamento_TRE_Montagens.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().from(elemento).set(opt).save();
+    }
+
+
+    /* =========================================================
+       COMPROVANTE — VISUALIZAÇÃO SEGURA NO PRÓPRIO APP
+       Evita abrir data: em uma nova página (about:blank) no Android/WebView.
+       ========================================================= */
+    function abrirComprovanteVale(id) {
+      const vale = vales.find(v => String(v.id) === String(id));
+      if (!vale || !vale.comprovante) {
+        alert('Comprovante não encontrado.');
+        return;
+      }
+
+      const modal = document.getElementById('modal-comprovante');
+      const imagem = document.getElementById('comprovante-preview');
+      const titulo = document.getElementById('comprovante-titulo');
+      if (!modal || !imagem) return;
+
+      imagem.src = vale.comprovante;
+      imagem.alt = `Comprovante ${vale.tipo || 'lançamento'}`;
+      modal.dataset.valeId = String(id);
+      if (titulo) titulo.textContent = `Comprovante — ${vale.tipo || 'Lançamento'}`;
+      modal.classList.remove('hidden');
+    }
+
+    function fecharComprovanteVale() {
+      const modal = document.getElementById('modal-comprovante');
+      const imagem = document.getElementById('comprovante-preview');
+      if (imagem) imagem.src = '';
+      if (modal) {
+        modal.classList.add('hidden');
+        delete modal.dataset.valeId;
+      }
+    }
+
+    async function baixarComprovanteVale() {
+      const modal = document.getElementById('modal-comprovante');
+      const id = modal?.dataset?.valeId;
+      const vale = vales.find(v => String(v.id) === String(id));
+      if (!vale || !vale.comprovante) {
+        alert('Comprovante não encontrado.');
+        return;
+      }
+
+      try {
+        const dataUrl = vale.comprovante;
+        const partes = dataUrl.split(',');
+        const mimeMatch = partes[0].match(/data:([^;]+);base64/i);
+        const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const binario = atob(partes[1]);
+        const bytes = new Uint8Array(binario.length);
+        for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+
+        const blob = new Blob([bytes], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const ext = mime.includes('png') ? 'png' : mime.includes('webp') ? 'webp' : 'jpg';
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `comprovante_TRE_${String(vale.id).slice(-8)}.${ext}`;
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (err) {
+        console.error('Erro ao baixar comprovante:', err);
+        alert('Não foi possível baixar o comprovante neste momento.');
+      }
+    }
+
+    // Fecha o visualizador tocando fora da imagem ou pressionando ESC.
+    document.getElementById('modal-comprovante')?.addEventListener('click', (event) => {
+      if (event.target.id === 'modal-comprovante') fecharComprovanteVale();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') fecharComprovanteVale();
+    });
+
+  </script>
+<script>
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') fecharModalDetalhesObra();
+    });
+  </script>
+</body>
+</html>
